@@ -4,7 +4,6 @@ from . import setup, tools
 from . import constants as c
 
 
-TOWN = 'town'
 MAIN_MENU = 'main menu'
 CASTLE = 'castle'
 HOUSE = 'house'
