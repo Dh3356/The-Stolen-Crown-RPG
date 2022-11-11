@@ -2,6 +2,8 @@
 Module for all game observers.
 """
 
+# observer.py 기능 : 게임 내 Observer 기능을 구현한다.
+
 # 모듈: pygame, constants, setup, component(attackitems)
 import pygame as pg
 from . import constants as c
