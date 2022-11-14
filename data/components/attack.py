@@ -9,10 +9,12 @@ from .. import setup, tools
 if sys.version_info[0] == 2:
     range = xrange
 
+#fire 클래스: fire 마법에 필요한 애니메이션 구현
 class Fire(pg.sprite.Sprite):
     """
     Fire animation for attacks.
     """
+    #생성자(객체 멤버변수 초기화: 애니메이션에 사용할 이미지, 현재 사용되는 이미지, 이미지와 관련된 정보, 타이머)
     def __init__(self, x, y):
         super(Fire, self).__init__()
         self.spritesheet = setup.GFX['explosion']
@@ -23,6 +25,7 @@ class Fire(pg.sprite.Sprite):
         self.rect = self.image.get_rect(left=x, top=y)
         self.timer = 0.0
 
+    #fire 마법 애니메이션에 사용할 이미지 리스트 구현
     def make_image_list(self):
         """
         Make a list of images to cycle through for the
@@ -40,6 +43,7 @@ class Fire(pg.sprite.Sprite):
 
         return image_list
 
+    #인덱스를 증가시키며 이미지를 업데이트시키는 메소드
     def update(self):
         """
         Update fire explosion.
