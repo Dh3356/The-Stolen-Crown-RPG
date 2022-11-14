@@ -666,7 +666,7 @@ class TiledObject(TiledElement):
     def __repr__(self):
         return "<{0}: \"{1}\">".format(self.__class__.__name__, self.name)
 
-    #point를 parse해 좌표를 얻고 self.point에 저장한다
+    #point를 parse해 좌표를 얻고 self.point에 저장한다.
     def parse(self, node):
         self.set_properties(node)
 
