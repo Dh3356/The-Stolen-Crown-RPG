@@ -156,7 +156,7 @@ class TiledMap(TiledElement):
 
         raise NotImplementedError
 
-    #area 내에 있는 타일들의 모음을 반환한다.(하위클래스에서 반드시 Override 하여 구현해야 한다)
+    #area 내에 있는 타일들의 모음을 반환한다.(하위클래스에서 반드시 Override 하여 구현해야 한다).
     def getTileImages(self, r, layer):
         """
         return a group of tiles in an area
