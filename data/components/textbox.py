@@ -4,18 +4,20 @@ import pygame as pg
 from .. import setup, observer, tools
 from .. import constants as c
 
-
+#다음 페이지가 있다는 것을 알려주는 깜빡거리는 화살표를 구현하는 클래스
 class NextArrow(pg.sprite.Sprite):
     """Flashing arrow indicating more dialogue"""
+    #객체 맴버변수 초기화
     def __init__(self):
         super(NextArrow, self).__init__()
         self.image = setup.GFX['fancyarrow']
         self.rect = self.image.get_rect(right=780,
                                         bottom=135)
 
-
+#대화 스크립트를 표시해주는 텍스트박스를 구현하는 클래스
 class DialogueBox(object):
     """Text box used for dialogue"""
+    #객체 멤버변수 초기화
     def __init__(self, dialogue, index=0, image_key='dialoguebox', item=None):
         self.item = item
         self.bground = setup.GFX[image_key]
@@ -34,6 +36,7 @@ class DialogueBox(object):
         self.notify = tools.notify_observers
         self.notify(self, c.CLICK)
 
+    #대화박스의 이미지를 가져와  텍스트와 함께 surface에 blit해주는 메소드
     def make_dialogue_box_image(self):
         """
         Make the image of the dialogue box.
@@ -50,17 +53,21 @@ class DialogueBox(object):
 
         return image
 
+    #텍스트,텍스트 박스를 업데이트 해주는 메소드
     def update(self, keys, current_time):
         """Updates scrolling text"""
         self.current_time = current_time
         self.draw_box(current_time)
         self.terminate_check(keys)
-
+    
+    #다음 대화로 넘어갈 때 새로 텍스트박스와 텍스트를 그려주는 메소드(make_dialogue_box_image() 호출)
+    #다음 페이지가 있는지 확인하여 화살표를 그릴지 결정한다.(check_to_draw_arrow() 호출)
     def draw_box(self, current_time, x=400):
         """Reveal dialogue on textbox"""
         self.image = self.make_dialogue_box_image()
         self.check_to_draw_arrow()
 
+    #텍스트가 마지막인지 확인하는 메소드(TextHandler에서 활용하는 done, allow_input 값 변경)
     def terminate_check(self, keys):
         """Remove textbox from sprite group after 2 seconds"""
         if keys[pg.K_SPACE] and self.allow_input:
@@ -68,7 +75,8 @@ class DialogueBox(object):
 
         if not keys[pg.K_SPACE]:
             self.allow_input = True
-
+    
+    #다음 텍스트 페이지가 있는지 확인하여(dialouge_list, index 참조) 화살표를 그릴지 결정하는 메소드
     def check_to_draw_arrow(self):
         """
         Blink arrow if more text needs to be read.
@@ -76,10 +84,11 @@ class DialogueBox(object):
         if self.index < len(self.dialogue_list) - 1:
             self.image.blit(self.arrow.image, self.arrow.rect)
 
-
+#대화박스를 생성하는데에 필요한 상호작용을 제어하기 위한 클래스
 class TextHandler(object):
     """Handles interaction between sprites to create dialogue boxes"""
 
+    #객체 매개변수 초기화
     def __init__(self, level):
         self.player = level.player
         self.sprites = level.sprites
@@ -92,6 +101,7 @@ class TextHandler(object):
         self.observers = [observer.SoundEffects()]
         self.notify = tools.notify_observers
 
+    #대화 박스를 생성하기 위한 조건들을 체크하기 위한 메소드(done, allow_input 등 멤버 참조)
     def update(self, keys, current_time):
         """Checks for the creation of Dialogue boxes"""
         if keys[pg.K_SPACE] and not self.textbox and self.allow_input:
@@ -167,6 +177,7 @@ class TextHandler(object):
         if not keys[pg.K_SPACE]:
             self.allow_input = True
 
+    #대화 박스 상태를 종료하는 메소드
     def end_dialogue(self, current_time):
         """
         End dialogue state for level.
@@ -178,6 +189,7 @@ class TextHandler(object):
         self.reset_sprite_direction()
         self.notify(self, c.CLICK)
 
+    #ai캐릭터에 대화를 걸면 player를 바라보도록 하는 메소드
     def check_for_dialogue(self, sprite):
         """Checks if a sprite is in the correct location to give dialogue"""
         player = self.player
@@ -204,6 +216,7 @@ class TextHandler(object):
                 sprite.direction = 'left'
                 self.talking_sprite = sprite
 
+    #ai캐릭터가 player에게 줄 아이템이 있는지 확인하는 메소드
     def check_for_item(self):
         """Checks if sprite has an item to give to the player"""
         item = self.talking_sprite.item
@@ -230,6 +243,7 @@ class TextHandler(object):
                 dialogue = ['Hurry! There is precious little time.']
                 self.level.reset_dialogue = self.talking_sprite, dialogue
 
+    #인벤토리에 새로운 아이템을 추가하는 메소드(healing potion, ether potion, elxir, fire blast)
     def add_new_item_to_inventory(self, item):
         inventory = self.game_data['player inventory']
         potions = ['Healing Potion', 'Ether Potion']
@@ -244,25 +258,27 @@ class TextHandler(object):
         else:
             pass
 
+    #게임 아이템 정보를 업데이트하는 메소드
     def update_game_items_info(self, sprite):
         if sprite.name == 'treasurechest':
             self.game_data['treasure{}'.format(sprite.id)] = False
         elif sprite.name == 'oldmanbrother':
             self.game_data['brother elixir'] = False
 
+    #스프라이트(캐릭터)의 방향을 초기화하여 디폴트 방향을 바라보도록 하는 메소드
     def reset_sprite_direction(self):
         """Reset sprite to default direction"""
         for sprite in self.sprites:
             if sprite.state == 'resting':
                 sprite.direction = sprite.default_direction
 
-
+    #surface에 textbox를 그리는 메소드
     def draw(self, surface):
         """Draws textbox to surface"""
         if self.textbox:
             surface.blit(self.textbox.image, self.textbox.rect)
 
-
+    #name 값을 참조하여 itembox 혹은 dialoguebox를 선택하여 생성하는 메소드
     def make_textbox(self, name, dialogue, item=None):
         """Make textbox on demand"""
         if name == 'itembox':
@@ -274,6 +290,7 @@ class TextHandler(object):
 
         return textbox
 
+    #보물상자를 열면 보물상자의 상태를 변경해주는 메소드(보물상자 객체의 index +1)
     def open_chest(self, sprite):
         if sprite.name == 'treasurechest':
             sprite.index = 1
