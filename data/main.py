@@ -4,30 +4,30 @@ from . import setup, tools
 from . import constants as c
 
 
-TOWN = 'town'
-MAIN_MENU = 'main menu'
-CASTLE = 'castle'
+TOWN = 'town'                   # 도시 
+MAIN_MENU = 'main menu'         # 메인메뉴
+CASTLE = 'castle'               # 왕 거주 성
 HOUSE = 'house'
 INN = 'Inn'
-ARMOR_SHOP = 'armor shop'
-WEAPON_SHOP = 'weapon shop'
-MAGIC_SHOP = 'magic shop'
-POTION_SHOP = 'potion shop'
-PLAYER_MENU = 'player menu'
-OVERWORLD = 'overworld'
-BROTHER_HOUSE = 'brotherhouse'
-BATTLE = 'battle'
-DUNGEON = 'dungeon'
-DUNGEON2 = 'dungeon2'
-DUNGEON3 = 'dungeon3'
-DUNGEON4 = 'dungeon4'
-DUNGEON5 = 'dungeon5'
+ARMOR_SHOP = 'armor shop'       # 갑옷(방어) 상점
+WEAPON_SHOP = 'weapon shop'     #  무기 상점
+MAGIC_SHOP = 'magic shop'       # 마법 상점
+POTION_SHOP = 'potion shop'     # 포션(약물) 상점
+PLAYER_MENU = 'player menu'     # 사용자 메뉴
+OVERWORLD = 'overworld'         
+BROTHER_HOUSE = 'brotherhouse'  # 노인의 형제가 거주하는 집
+BATTLE = 'battle'   
+DUNGEON = 'dungeon'             # 던전1
+DUNGEON2 = 'dungeon2'           # 던전2
+DUNGEON3 = 'dungeon3'           # 던전3
+DUNGEON4 = 'dungeon4'           # 던전4
+DUNGEON5 = 'dungeon5'           # 던전5
 INSTRUCTIONS = 'instructions'
 DEATH_SCENE = 'death scene'
 LOADGAME = 'load game'
 CREDITS = 'credits'
 
-
+# 전체 실행 main 메소드
 def main():
     """Add states to control here"""
     run_it = tools.Control(setup.ORIGINAL_CAPTION)

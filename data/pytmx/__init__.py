@@ -2,6 +2,7 @@ from data.pytmx.tmxloader import load_pygame, load_tmx
 from data.pytmx.utils import buildDistributionRects
 from data.pytmx.pytmx import *
 
+#디렉토리가 패키지로 인식되도록 하고, 패키지를 초기화한다
 __version__ = '2.16.4'
 __author__ = 'bitcraft'
 __author_email__ = 'leif.theden@gmail.com'

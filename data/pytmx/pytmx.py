@@ -6,10 +6,10 @@ from .utils import decode_gid, types, parse_properties, read_points
 __all__ = ['TiledMap', 'TiledTileset', 'TiledLayer', 'TiledObject', 'TiledObjectGroup', 'TiledImageLayer']
 
 
-#
+#Tiled의 속성을 나타내는 클래스
 class TiledElement(object):#pyhon 2.2 이상, 3 미만에서는 클래스에 object를 명시적으로 상속해줘야 한다
     
-    #
+    #xml 노드에서 xml 속성 및 Tiled의 "properties"을 읽고 값을 object의 딕셔너리에 저장한다
     def set_properties(self, node):
         """
         read the xml attributes and tiled "properties" from a xml node and fill
@@ -628,7 +628,7 @@ class TiledObjectGroup(TiledElement, list):
     def __repr__(self):
         return "<{0}: \"{1}\">".format(self.__class__.__name__, self.name)
 
-    #node에서 object를 pares해 object그룹으로 반환한다.
+    #node에서 object를 pares해 object그룹으로 반환한다
     def parse(self, node):
         """
         parse a objectgroup element and return a object group
@@ -654,7 +654,7 @@ class TiledObject(TiledElement):
         self.type = None
         self.x = 0
         self.y = 0
-        self.width = 0  
+        self.width = 0
         self.height = 0
         self.rotation = 0
         self.gid = 0
@@ -666,7 +666,7 @@ class TiledObject(TiledElement):
     def __repr__(self):
         return "<{0}: \"{1}\">".format(self.__class__.__name__, self.name)
 
-    #point를 parse해 좌표를 얻고 self.point에 저장한다
+    #point를 parse해 좌표를 얻고 self.point에 저장한다.
     def parse(self, node):
         self.set_properties(node)
 
@@ -694,8 +694,8 @@ class TiledObject(TiledElement):
                 if x > x2: x2 = x  #x가 양수이면 x2에 x를 넣는다.
                 if y < y1: y1 = y  #y가 양수이면 y1에 y를 넣는다.
                 if y > y2: y2 = y  #y가 양수이면 y2에 y를 넣는다.
-            self.width = abs(x1) + abs(x2) #width에 x1절댓값+x2절댓값을 저장한다(길이)
-            self.height = abs(y1) + abs(y2) #height y1절댓값+y2절댓값을 저장한다(높이)
+            self.width = abs(x1) + abs(x2) #width에 x1절댓값 + x2절댓값을 저장한다(길이)
+            self.height = abs(y1) + abs(y2) #height y1절댓값 + y2절댓값을 저장한다(높이)
             self.points = tuple([(i[0] + self.x, i[1] + self.y) for i in points])
 
 #Tiled의 imagelayer을 나타내는 클래스
