@@ -1,19 +1,20 @@
 from __future__ import division
-from itertools import izip
+import itertools
 import math, random, copy, sys
 import pygame as pg
-from .. import setup, observer
-from .. import constants as c
+from data import setup, observer
+from data import constants as c
 
 #Python 2/3 compatibility.
 if sys.version_info[0] == 2:
     range = xrange
 
-
+#게임에 등장하는 모든 ai캐릭터들을 컨트롤하기 위한 클래스(pg.sprite.Sprite 상속)
 class Person(pg.sprite.Sprite):
     """Base class for all world characters
     controlled by the computer"""
 
+    #객체 멤버변수 초기화
     def __init__(self, sheet_key, x, y, direction='down', state='resting', index=0):
         super(Person, self).__init__()
         self.alpha = 255
@@ -46,6 +47,7 @@ class Person(pg.sprite.Sprite):
         self.death_image = pg.transform.scale2x(self.image)
         self.battle = None
 
+    #sprite sheet에서 필요한 이미지들을 모아둔 딕셔너리 생성하여 반환
     def create_spritesheet_dict(self, sheet_key):
         """
         Make a dictionary of images from sprite sheet.
@@ -53,22 +55,24 @@ class Person(pg.sprite.Sprite):
         image_list = []
         image_dict = {}
         sheet = setup.GFX[sheet_key]
-
+    
         image_keys = ['facing up 1', 'facing up 2',
                       'facing down 1', 'facing down 2',
                       'facing left 1', 'facing left 2',
                       'facing right 1', 'facing right 2']
-
+    
         for row in range(2):
             for column in range(4):
                 image_list.append(
                     self.get_image(column*32, row*32, 32, 32, sheet))
-
+    
         for key, image in izip(image_keys, image_list):
             image_dict[key] = image
-
+    
         return image_dict
 
+    #걷는 애니메이션 구현에 필요한 이미지 리스트의 딕셔너리를 구현하여 반환
+    #좌,우,위,아래 방향 이미지들을 각각 2개씩 가짐(걷는 모션 구현)
     def create_animation_dict(self):
         """
         Return a dictionary of image lists for animation.
@@ -87,6 +91,7 @@ class Person(pg.sprite.Sprite):
 
         return direction_dict
 
+    #모든 상태 메소드들을 모아놓은 딕셔너리 구현(resting(대기),moving(이동),animated resting(),...)
     def create_state_dict(self):
         """
         Return a dictionary of all state methods.
@@ -106,6 +111,7 @@ class Person(pg.sprite.Sprite):
 
         return state_dict
 
+    #이동 시 필요한 각 방향의 벡터값을 저장한 딕셔너리 구현
     def create_vector_dict(self):
         """
         Return a dictionary of x and y velocities set to
@@ -118,6 +124,7 @@ class Person(pg.sprite.Sprite):
 
         return vector_dict
 
+    #sprite를 현재 상태를 참조하여 업데이트하는 메소드
     def update(self, current_time, *args):
         """
         Update sprite.
@@ -129,6 +136,7 @@ class Person(pg.sprite.Sprite):
         state_function()
         self.location = self.get_tile_location()
 
+    #스프라이트들(캐릭터들)끼리의 충돌을 막기 위하여 각 캐릭터들의 현재 rect의 위치를 저장하는 메소드
     def set_blockers(self):
         """
         Sets blockers to prevent collision with other sprites.
@@ -157,6 +165,7 @@ class Person(pg.sprite.Sprite):
 
         return blockers
 
+    #캐릭터의 위치를 pygame의 rect값에서 게임 내의 타일의 위치로 변환해주는 메소드
     def get_tile_location(self):
         """
         Convert pygame coordinates into tile coordinates.
@@ -177,7 +186,7 @@ class Person(pg.sprite.Sprite):
 
         return [tile_x, tile_y]
 
-
+    #스프라이트(ai캐릭터)의 이동반경을 제한할 때 사용하는 클래스
     def make_wander_box(self):
         """
         Make a list of rects that surround the initial location
@@ -203,6 +212,7 @@ class Person(pg.sprite.Sprite):
 
         return box_rects
 
+    #player가 타일들 사이에서 움직이지 않을 때 타일의 중앙으로 이동(correct_Position 호출) 시켜주는 메소드
     def resting(self):
         """
         When the Person is not moving between tiles.
@@ -215,6 +225,7 @@ class Person(pg.sprite.Sprite):
         if self.rect.x % 32 != 0:
             self.correct_position(self.rect.x)
 
+    #animation함수를 호출하고, 스프라이트가 타일의 가운데에 있는지 확인하여 아니면 예외 출력 
     def moving(self):
         """
         Increment index and set self.image for animation.
@@ -223,9 +234,11 @@ class Person(pg.sprite.Sprite):
         assert(self.rect.x % 32 == 0 or self.rect.y % 32 == 0), \
             'Not centered on tile'
 
+    #ai캐릭터가 이동 후 멈출 때 이용하는 메소드(frequency 값을 500으로 주어 animation 함수 호출)
     def animated_resting(self):
         self.animation(500)
 
+    #캐릭터의 움직임 애니메이션 표현에 필요한 메소드(index값 +1, 애니메이션이 끝나면 0으로 초기화)
     def animation(self, freq=100):
         """
         Adjust sprite image frame based on timer.
@@ -239,6 +252,7 @@ class Person(pg.sprite.Sprite):
 
         self.image = self.image_list[self.index]
 
+    #player을 'moving'(움직이는)상태로 변경해주는 메소드
     def begin_moving(self, direction):
         """
         Transition the player into the 'moving' state.
@@ -254,7 +268,7 @@ class Person(pg.sprite.Sprite):
         if self.rect.y % 32 == 0:
             self.x_vel = self.vector_dict[self.direction][0]
 
-
+    #player을 resting(대기)상태로 변경해주는 메소드
     def begin_resting(self):
         """
         Transition the player into the 'resting' state.
@@ -263,6 +277,7 @@ class Person(pg.sprite.Sprite):
         self.index = 1
         self.x_vel = self.y_vel = 0
 
+    #ai캐릭터를 'auto moving'(자동 움직임)상태로 변경해주는 메소드
     def begin_auto_moving(self, direction):
         """
         Transition sprite to a automatic moving state.
@@ -274,6 +289,7 @@ class Person(pg.sprite.Sprite):
         self.y_vel = self.vector_dict[direction][1]
         self.move_timer = self.current_time
 
+    #ai캐릭터를 'autoresting'(자동 대기)상태로 만들어주는 메소드
     def begin_auto_resting(self):
         """
         Transition sprite to an automatic resting state.
@@ -283,7 +299,7 @@ class Person(pg.sprite.Sprite):
         self.x_vel = self.y_vel = 0
         self.move_timer = self.current_time
 
-
+    #ai캐릭터를 대기 상태에서 움직임 상태로 바꿔줄 때 랜덤 방향과 타이밍을 결정해주는 메소드
     def auto_resting(self):
         """
         Determine when to move a sprite from resting to moving in a random
@@ -304,6 +320,7 @@ class Person(pg.sprite.Sprite):
             self.begin_auto_moving(direction)
             self.move_timer = self.current_time
 
+    #캐릭터의 위치를 타일의 중앙으로 옮겨주는 메소드
     def correct_position(self, rect_pos):
         """
         Adjust sprite position to be centered on tile.
@@ -314,13 +331,14 @@ class Person(pg.sprite.Sprite):
         else:
             rect_pos + diff
  
-
+    #player가 배틀 중 어택시를 제외한 대기상태를 나타내는 메소드(내용 x) 
     def battle_resting(self):
         """
         Player stays still during battle state unless he attacks.
         """
         pass
-
+    
+    #player를 attack_state(공격 상태)로 바꿔주는 메소드.
     def enter_attack_state(self, enemy):
         """
         Set values for attack state.
@@ -331,6 +349,7 @@ class Person(pg.sprite.Sprite):
         self.state = 'attack'
 
 
+    #player가 'attack'선택 시 공격 애니메이션을 구현하는 메소드(앞으로 5, 뒤로 5)
     def attack(self):
         """
         Player does an attack animation.
@@ -355,6 +374,7 @@ class Person(pg.sprite.Sprite):
                 self.image = pg.transform.scale2x(self.image)
                 self.notify(c.PLAYER_FINISHED_ATTACK)
 
+    #적(ai캐릭터)를 attack_state(공격 상태)로 바꿔주는 메소드
     def enter_enemy_attack_state(self):
         """
         Set values for enemy attack state.
@@ -364,6 +384,7 @@ class Person(pg.sprite.Sprite):
         self.origin_pos = self.rect.topleft
         self.move_counter = 0
 
+    #적의 공격 애니메이션을 구현하는 메소드.(player의 반대)
     def enemy_attack(self):
         """
         Enemy does an attack animation.
@@ -388,6 +409,7 @@ class Person(pg.sprite.Sprite):
                 self.move_counter += 1
                 self.x_vel = FAST_LEFT
 
+    #ai캐릭터의 움직임을 실행(animation() 호출)하고 잘 멈췄는지 확인하는 메소드(타일의 중앙에 있는지)
     def auto_moving(self):
         """
         Animate sprite and check to stop.
@@ -397,6 +419,7 @@ class Person(pg.sprite.Sprite):
         assert(self.rect.x % 32 == 0 or self.rect.y % 32 == 0), \
             'Not centered on tile'
 
+    #모든 observer들에게 이벤트(피격,이동 등)를 전달하는 함수
     def notify(self, event):
         """
         Notify all observers of events.
@@ -404,6 +427,7 @@ class Person(pg.sprite.Sprite):
         for observer in self.observers:
             observer.on_notify(event)
 
+    #피격의 데미지를 attack stats를 참조하여 계산하는 메소드.(최소 0 ~ 최대 (대상의 레벨*5 - 방어구 수치))
     def calculate_hit(self, armor_list, inventory):
         """
         Calculate hit strength based on attack stats.
@@ -415,6 +439,7 @@ class Person(pg.sprite.Sprite):
         min_strength = 0
         return random.randint(min_strength, max_strength)
 
+    #전투에서 run 선택 시 전투에서 벗어나는 상태로 전환해주는 메소드
     def run_away(self):
         """
         Run away from battle state.
@@ -428,6 +453,7 @@ class Person(pg.sprite.Sprite):
             self.image_list.append(pg.transform.scale2x(image))
         self.animation()
 
+    #player가 전투 승리 시 춤을 추는 상태로 전환해주는 메소드
     def victory_dance(self):
         """
         Post Victory Dance.
@@ -438,6 +464,7 @@ class Person(pg.sprite.Sprite):
             self.image_list.append(pg.transform.scale2x(image))
         self.animation(500)
 
+    #대상이 피격 시 뒤로 넉백되는 애니메이션 구현하는 메소드(앞으로 -2만큼 이동 후 원위치)
     def knock_back(self):
         """
         Knock back when hit.
@@ -461,6 +488,7 @@ class Person(pg.sprite.Sprite):
                 self.state = 'battle resting'
                 self.x_vel = 0
 
+    #캐릭터가 사망 시 투명하게 만드는 애니메이션을 구현한 메소드(alpha값을 8씩 감소시키며 0 이하가 되면 제거(kill 호출))
     def fade_death(self):
         """
         Make character become transparent in death.
@@ -475,6 +503,7 @@ class Person(pg.sprite.Sprite):
             self.notify(c.ENEMY_DEAD)
 
 
+    #캐릭터가 피격 시 넉백 상태로 전환해주는 메소드(사망 시 x)(player일 시 앞으로 4만큼, 적이라면 -4만큼 이동 후 원위치)
     def enter_knock_back_state(self):
         """
         Set values for entry to knock back state.
@@ -487,12 +516,13 @@ class Person(pg.sprite.Sprite):
         self.state = c.KNOCK_BACK
         self.origin_pos = self.rect.topleft
 
-
+#player(주인공)을 컨트롤하기 위한 클래스(Person 클래스 상속)
 class Player(Person):
     """
     User controlled character.
     """
 
+    #객체 멤버변수 초기화()
     def __init__(self, direction, game_data, x=0, y=0, state='resting', index=0):
         super(Player, self).__init__('player', x, y, direction, state, index)
         self.damaged = False
@@ -504,6 +534,7 @@ class Player(Person):
         self.index = 1
         self.image = self.image_list[self.index]
 
+    #플레이어의 레벨값을 game_data에서 호출하여 반환해주는 메소드
     @property
     def level(self):
         """
@@ -512,6 +543,7 @@ class Player(Person):
         return self.game_data['player stats']['Level']
 
 
+    #플레이어의 이동에 필요한 벡터값을 구현하는 메소드(플레이어는 2칸 씩 이동)
     def create_vector_dict(self):
         """Return a dictionary of x and y velocities set to
         direction keys."""
@@ -522,6 +554,7 @@ class Player(Person):
 
         return vector_dict
 
+    #player의 행동을 지정해주는 메소드
     def update(self, keys, current_time):
         """Updates player behavior"""
         self.current_time = current_time
@@ -534,6 +567,7 @@ class Player(Person):
         state_function()
         self.location = self.get_tile_location()
 
+    #player가 피격 시 붉게 변하는 애니메이션을 구현한 메소드
     def damage_animation(self):
         """
         Put a red overlay over sprite to indicate damage.
@@ -558,6 +592,7 @@ class Player(Person):
                     self.image = self.spritesheet_dict['facing left 2']
                     self.image = pg.transform.scale2x(self.image)
 
+    #player가 힐링포션 사용 시 초록색으로 변하는 애니메이션을 구현한 메소드
     def healing_animation(self):
         """
         Put a green overlay over sprite to indicate healing.
@@ -582,6 +617,7 @@ class Player(Person):
                     self.image = self.spritesheet_dict['facing left 2']
                     self.image = pg.transform.scale2x(self.image)
 
+    #player가 대기 상태일 때 사용자의 입력을 받는 메소드(위 키, 아래 키, 왼쪽 키, 오른쪽 키)
     def check_for_input(self):
         """Checks for player input"""
         if self.state == 'resting':
@@ -594,6 +630,7 @@ class Player(Person):
             elif self.keys[pg.K_RIGHT]:
                 self.begin_moving('right')
 
+    #player가 공격 시 데미지를 game_data의 weapon 키들을 참조하여 계산하여 반환하는 메소드(최대 착용 중인 무기의 power ~ 최소 최대값의 -7)
     def calculate_hit(self):
         """
         Calculate hit strength based on attack stats.
@@ -604,21 +641,24 @@ class Player(Person):
         min_strength = max_strength - 7
         return random.randint(min_strength, max_strength)
 
-
+#적의 행동을 제어하기 위한 클래스(Person 클래스 상속)
 class Enemy(Person):
     """
     Enemy sprite.
     """
+
+    #객체 멤버변수 초기화
     def __init__(self, sheet_key, x, y, direction='down', state='resting', index=0):
         super(Enemy, self).__init__(sheet_key, x, y, direction, state, index)
         self.level = 1
         self.type = 'enemy'
 
-
+#아이템이 들어있는 상자를 제어하기 위한 클래스(Person 클래스 상속)
 class Chest(Person):
     """
     Treasure chest that contains items to collect.
     """
+    #객체 멤버변수 초기화
     def __init__(self, x, y, id):
         super(Chest, self).__init__('treasurechest', x, y)
         self.spritesheet_dict = self.make_image_dict()
@@ -626,7 +666,8 @@ class Chest(Person):
         self.image = self.image_list[self.index]
         self.rect = self.image.get_rect(x=x, y=y)
         self.id = id
-
+    
+    #상자가 닫힌 이미지와 열린 이미지가 저장된 딕셔너리를 구현하여 반환하는 메소드
     def make_image_dict(self):
         """
         Make a dictionary for the sprite's images.
@@ -637,6 +678,7 @@ class Chest(Person):
 
         return image_dict
 
+    #위에서 구현한 이미지 딕셔너리를 배열로 변환하는 메소드
     def make_image_list(self):
         """
         Make the list of two images for the chest.
@@ -646,6 +688,7 @@ class Chest(Person):
 
         return image_list
 
+    #상자의 상태를 지정해주는 메소드
     def update(self, current_time, *args):
         """Implemented by inheriting classes"""
         self.blockers = self.set_blockers()
