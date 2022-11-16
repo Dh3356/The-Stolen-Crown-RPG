@@ -78,7 +78,7 @@ class CollisionHandler(object):
             if self.player.rect.colliderect(blocker):
                 player_collided = True
 
-        if player_collided:
+        if player_collided: 
             self.reset_after_collision(self.player)
             self.player.begin_resting()
 
