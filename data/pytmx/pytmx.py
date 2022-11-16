@@ -83,7 +83,7 @@ class TiledMap(TiledElement):
         if filename:
             self.load()
 
-    #class명과 매개변수로 받은 filename을 문자열로 반환한다
+    #사용자가 객체 자체를 이해할 수 있게 객체 정보를 문자열로 반환한다
     def __repr__(self):
         return "<{0}: \"{1}\">".format(self.__class__.__name__, self.filename)
 
@@ -311,6 +311,7 @@ class TiledMap(TiledElement):
     def loadTileImages(self, filename):
         raise NotImplementedError
 
+    #Tiled tmx 파일에서 map을 load한다
     def load(self):
         """
         parse a map node from a tiled tmx file
