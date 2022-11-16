@@ -1,7 +1,6 @@
 import itertools
 import os
 import pygame
-
 from data.pytmx import pytmx
 from .constants import *
 
@@ -74,7 +73,7 @@ def smart_convert(original, colorkey, force_colorkey, pixelalpha):
     return tile
 
 
-#이미지를 load하는 함수
+#이미지를 load한다
 def _load_images_pygame(tmxdata, mapping, *args, **kwargs):
     """
     Utility function to load images.

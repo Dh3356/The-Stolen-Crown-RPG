@@ -105,7 +105,7 @@ class Menu(tools._State):
         if self.alpha >= 255:
             self.done = True
 
-    #빈 메소드(내용: pass)
+    #껍데기 메소드(내용: pass)
     def normal_update(self):
         pass
 
@@ -198,7 +198,7 @@ class Instructions(tools._State):
         update_level(keys)
         self.draw_level(surface)
 
-    #tmx 맵과 title box를 화면에 표시합니다
+    #tmx 맵과 title box를 화면에 표시한다
     def draw_level(self, surface):
         """
         Blit tmx map and title box onto screen.
@@ -209,7 +209,7 @@ class Instructions(tools._State):
         surface.blit(self.level_surface, (0,0), self.viewport)
         surface.blit(self.transition_surface, (0,0))
 
-    #빈 메소드(내용: pass)
+    #껍데기 메소드(내용: pass)
     def draw_arrow(self):
         pass
         
@@ -239,7 +239,7 @@ class Instructions(tools._State):
         if self.alpha >= 255:
             self.done = True
 
-    #빈 메소드(내용: pass)
+    #껍데기 메소드(내용: pass)
     def normal_update(self, *args):
         pass
 
@@ -264,7 +264,7 @@ class LoadGame(Instructions):
     def draw_arrow(self):
         self.level_surface.blit(self.arrow.image, self.arrow.rect)
 
-    #빈 메소드(내용: pass)
+    #껍데기 메소드(내용: pass)
     def get_event(self, event):
         pass
     
