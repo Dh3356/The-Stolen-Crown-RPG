@@ -11,9 +11,14 @@ import pygame as pg
 from .. import tools, setup, shopgui
 from .. import constants as c
 
-
+#모든 상점 상태들의 부모 클래스가 되는 클래스
+#weapon 상점, armour상점, magic 상점, potion 상점의 부모 클래스(여관도 포함)
+#다른 상태 대비 2배 확대된다.
+#self.gui는 모든 텍스트박스들을 제어한다.
 class Shop(tools._State):
     """Basic shop state"""
+    
+    #객체 멤버변수 초기화
     def __init__(self):
         super(Shop, self).__init__()
         self.key = None
@@ -21,6 +26,7 @@ class Shop(tools._State):
         self.music = setup.MUSIC['shop_theme']
         self.volume = 0.4
 
+    #상점 상태로 돌입할 때 셋업을 해주는 메소드
     def startup(self, current_time, game_data):
         """Startup state"""
         self.game_data = game_data
@@ -38,6 +44,7 @@ class Shop(tools._State):
         self.transition_rect = setup.SCREEN.get_rect()
         self.transition_alpha = 255
 
+    #모든 상태에 대한 딕셔너리를 구현하는 메소드
     def make_state_dict(self):
         """
         Make a dictionary for all state methods.
@@ -48,30 +55,35 @@ class Shop(tools._State):
 
         return state_dict
 
+    #대화 구문 리스트를 구현하는 명시적 메소드(내용x)
     def make_dialogue(self):
         """
         Make the list of dialogue phrases.
         """
         raise NotImplementedError
 
+    #player가 아이템을 구매할 시 출력하는 구문을 반환하는 메소드
     def make_accept_dialogue(self):
         """
         Make the dialogue for when the player buys an item.
         """
         return ['Item purchased.']
 
+    #player가 아이템을 판매할 시 출력하는 구문을 반환하는 메소드
     def make_accept_sale_dialogue(self):
         """
         Make the dialogue for when the player sells an item.
         """
         return ['Item sold.']
 
+    #상점에서 구매할 수 있는 아이템 리스트를 구현하는 명시적 메소드(내용x)
     def make_purchasable_items(self):
         """
         Make the list of items to be bought at shop.
         """
         raise NotImplementedError
 
+    #상점의 배경을 surface를 구현하는 메소드(player와 상점주인의 크기 증가, 배경 검정색)
     def make_background(self):
         """
         Make the level surface.
@@ -92,6 +104,7 @@ class Shop(tools._State):
 
         return background
 
+    #player의 이미지를 가져오는 메소드(작은 surface 새로 구현)
     def make_sprite(self, key, coordx, coordy, x, y=304):
         """
         Get the image for the player.
@@ -111,6 +124,7 @@ class Shop(tools._State):
 
         return sprite
 
+    #카운터 이미지를 구현하는 메소드
     def make_counter(self):
         """
         Make the counter to conduct business.
@@ -123,6 +137,7 @@ class Shop(tools._State):
 
         return sprite
 
+    #현재 상태를 참조하여 장면을 업데이트하는 메소드
     def update(self, surface, keys, current_time):
         """
         Update scene.
@@ -130,6 +145,7 @@ class Shop(tools._State):
         state_function = self.state_dict[self.state]
         state_function(surface, keys, current_time)
 
+    #상점에서 일련의 처리를 마친 후에 상태를 업데이트 하는 메소드
     def normal_update(self, surface, keys, current_time):
         """
         Update level normally.
@@ -137,6 +153,7 @@ class Shop(tools._State):
         self.gui.update(keys, current_time)
         self.draw_level(surface)
 
+    #상점에 진입할 때 배경을 서서히변경하는 메소드(페이드인)
     def transition_in(self, surface, *args):
         """
         Transition into level.
@@ -151,6 +168,7 @@ class Shop(tools._State):
             self.state = 'normal'
             self.transition_alpha = 0
 
+    #상점에서 나올 때 배경을 서서히 변경하는 메소드(페이드 아웃)
     def transition_out(self, surface, *args):
         """
         Transition level to new scene.
@@ -164,6 +182,7 @@ class Shop(tools._State):
         if self.transition_alpha >= 255:
             self.done = True
 
+    #surface에 배경 그림을 blit하는 메소드
     def draw_level(self, surface):
         """
         Blit graphics to game surface.
@@ -171,16 +190,19 @@ class Shop(tools._State):
         surface.blit(self.background.image, self.background.rect)
         self.gui.draw(surface)
 
-
+#상점의 일종인 여관을 제어하는 클래스
 class Inn(Shop):
     """
     Where our hero gets rest.
     """
+    
+    #객체 멤버변수 초기화
     def __init__(self):
         super(Inn, self).__init__()
         self.name = c.INN
         self.key = 'innman'
 
+    #여관 진입 시 대화 구문을 반환하는 메소드
     def make_dialogue(self):
         """
         Make the list of dialogue phrases.
@@ -188,12 +210,14 @@ class Inn(Shop):
         return ["Welcome to the " + self.name + "!",
                 "Would you like a room to restore your health?"]
 
+    #player가 아이템을 구매(휴식)하면 출력하는 구문 반환하는 메소드
     def make_accept_dialogue(self):
         """
         Make the dialogue for when the player buys an item.
         """
         return ['Your health has been replenished and your game saved!']
 
+    #구매 가능한 아이템(휴식)과 관련된 값들을 딕셔너리 형태로 구현하는 메소드
     def make_purchasable_items(self):
         """Make list of items to be chosen"""
         dialogue = 'Rent a room (30 gold)'
@@ -206,9 +230,11 @@ class Inn(Shop):
 
         return [item]
 
-
+#상점의 일종인 무기상점을 제어하는 클래스
 class WeaponShop(Shop):
     """A place to buy weapons"""
+
+    #객체 멤버변수 초기화
     def __init__(self):
         super(WeaponShop, self).__init__()
         self.name = c.WEAPON_SHOP
@@ -216,6 +242,7 @@ class WeaponShop(Shop):
         self.sell_items = ['Long Sword', 'Rapier']
 
 
+    #대화 구문 리스트를 구현하여 반환하는 메소드
     def make_dialogue(self):
         """Make the list of dialogue phrases"""
         shop_name = "{}{}".format(self.name[0].upper(), self.name[1:])
@@ -223,6 +250,7 @@ class WeaponShop(Shop):
                 "What weapon would you like to buy?"]
 
 
+    #구매 가능한 아이템과 관련 정보를 딕셔너리로 구현하여 반환하는 메소드
     def make_purchasable_items(self):
         """Make list of items to be chosen"""
         longsword_dialogue = 'Long Sword (150 gold)'
@@ -243,22 +271,25 @@ class WeaponShop(Shop):
         return [item1, item2]
 
 
+#상점의 일종인 방어구 상점을 제어하는 클래스
 class ArmorShop(Shop):
     """A place to buy armor"""
+
+    #객체 멤버변수 초기화
     def __init__(self):
         super(ArmorShop, self).__init__()
         self.name = c.ARMOR_SHOP
         self.key = 'armorman'
         self.sell_items = ['Chain Mail', 'Wooden Shield']
 
-
+    #대화 구문을 반환하는 메소드
     def make_dialogue(self):
         """Make the list of dialogue phrases"""
         shop_name = "{}{}".format(self.name[0].upper(), self.name[1:])
         return ["Welcome to the " + shop_name + "!",
                 "Would piece of armor would you like to buy?"]
 
-
+    #구매 가능한 아이템과 관련 정보를 딕셔너리로 구현하여 반환하는 메소드
     def make_purchasable_items(self):
         """Make list of items to be chosen"""
         chainmail_dialogue = 'Chain Mail (50 gold)'
@@ -278,22 +309,23 @@ class ArmorShop(Shop):
 
         return [item, item2]
 
-
+#상점의 일종인 마법상점을 제어하는 클래스
 class MagicShop(Shop):
     """A place to buy magic"""
+    #객체 멤버변수 초기화
     def __init__(self):
         super(MagicShop, self).__init__()
         self.name = c.MAGIC_SHOP
         self.key = 'magiclady'
 
-
+    #대화 구문을 반환하는 메소드
     def make_dialogue(self):
         """Make the list of dialogue phrases"""
         shop_name = "{}{}".format(self.name[0].upper(), self.name[1:])
         return ["Welcome to the " + shop_name + "!",
                 "Would magic spell would you like to buy?"]
 
-
+    #구매 가능한 아이템과 관련 정보를 딕셔너리로 구현하여 반환하는 메소드
     def make_purchasable_items(self):
         """Make list of items to be chosen"""
         fire_dialogue = 'Fire Blast (150 gold)'
@@ -315,23 +347,25 @@ class MagicShop(Shop):
 
         return [item1, item2]
 
-
+#상점의 일종인 포션상점을 제어하는 클래스
 class PotionShop(Shop):
     """A place to buy potions"""
+    
+    #객체 멤버변수 초기화
     def __init__(self):
         super(PotionShop, self).__init__()
         self.name = c.POTION_SHOP
         self.key = 'potionlady'
         self.sell_items = 'Healing Potion'
 
-
+    #대화 구문을 반환하는 메소드
     def make_dialogue(self):
         """Make the list of dialogue phrases"""
         shop_name = "{}{}".format(self.name[0].upper(), self.name[1:])
         return ["Welcome to the " + shop_name + "!",
                 "What potion would you like to buy?"]
 
-
+    #구매 가능한 아이템과 관련 정보를 딕셔너리로 구현하여 반환하는 메소드
     def make_purchasable_items(self):
         """Make list of items to be chosen"""
         healing_dialogue = 'Healing Potion (15 gold)'
