@@ -1,16 +1,14 @@
 from itertools import tee, islice, izip, product
 from collections import defaultdict
-
 from pygame import Rect
-
 from .constants import *
 
-
+#text를 split해 튜플 형태로 반환한다
 def read_points(text):
     return [ tuple(map(lambda x: int(x), i.split(',')))
          for i in text.split() ]
 
-
+#node를 parse해 tiled의 property 들을 dictionary 형태로 반환한다
 def parse_properties(node):
     """
     parse a node and return a dict that represents a tiled "property"
@@ -27,7 +25,7 @@ def parse_properties(node):
 
     return d
 
-
+#비트 연산자를 통해 gid를 Decode 해 flip한 gid 값과 내부 플래그 값의 합을 반환한다
 def decode_gid(raw_gid):
     # gids are encoded with extra information
     # as of 0.7.0 it determines if the tile should be flipped when rendered
@@ -41,7 +39,7 @@ def decode_gid(raw_gid):
 
     return gid, flags
 
-
+#text를 받아 긍정적인 내용("true" 혹은 "yes") 이면 True를 반환하고 부정적인 내용("false" 혹은 "no")이면 False를 반환한다. 둘 다 아니면 ValueError를 raise한다.
 def handle_bool(text):
     # properly convert strings to a bool
     try:
@@ -63,6 +61,7 @@ def handle_bool(text):
 
 # used to change the unicode string returned from xml to proper python
 # variable types.
+#xml에서 읽어온 유니코드 문자열을 python에 사용하기 적절한 형태로 바꾸는 변수
 types = defaultdict(lambda: str)
 types.update({
     "version": float,
@@ -89,19 +88,19 @@ types.update({
     "value": str,
 })
 
-
+#매개변수로 받은 iterable을 a, b에 각각 저장하고 a,b 쌍을 가지는 튜플을 반환한다
 def pairwise(iterable):
     # return a list as a sequence of pairs
     a, b = tee(iterable)
     next(b, None)
     return izip(a, b)
 
-
+#l을 n씩 잘라서 tuple에 넣은 후  iterable로 반환한다
 def group(l, n):
     # return a list as a sequence of n tuples
-    return izip(*(islice(l, i, None, n) for i in xrange(n)))
+    return izip(*(islice(l, i, None, n) for i in range(n)))
 
-
+#매개변수로 받은 real_gid의 분포를 나타내는 겹치지 않는 직사각형 집합을 반환한다.
 def buildDistributionRects(tmxmap, layer, tileset=None, real_gid=None):
     """
     generate a set of non-overlapping rects that represents the distribution
@@ -115,18 +114,18 @@ def buildDistributionRects(tmxmap, layer, tileset=None, real_gid=None):
             tileset = tmxmap.tilesets[tileset]
         except IndexError:
             msg = "Tileset #{0} not found in map {1}."
-            raise IndexError, msg.format(tileset, tmxmap)
+            raise IndexError(msg.format(tileset, tmxmap))
 
     elif isinstance(tileset, str):
         try:
             tileset = [ t for t in tmxmap.tilesets if t.name == tileset ].pop()
         except IndexError:
             msg = "Tileset \"{0}\" not found in map {1}."
-            raise ValueError, msg.format(tileset, tmxmap)
+            raise ValueError(msg.format(tileset, tmxmap))
 
     elif tileset:
         msg = "Tileset must be either a int or string. got: {0}"
-        raise ValueError, msg.format(type(tileset))
+        raise ValueError(msg.format(type(tileset)))
 
     gid = None
     if real_gid:
@@ -134,7 +133,7 @@ def buildDistributionRects(tmxmap, layer, tileset=None, real_gid=None):
             gid, flags = tmxmap.map_gid(real_gid)[0]
         except IndexError:
             msg = "GID #{0} not found"
-            raise ValueError, msg.format(real_gid)
+            raise ValueError(msg.format(real_gid))
 
     if isinstance(layer, int):
         layer_data = tmxmap.getLayerData(layer).data
@@ -144,9 +143,9 @@ def buildDistributionRects(tmxmap, layer, tileset=None, real_gid=None):
             layer_data = layer.data
         except IndexError:
             msg = "Layer \"{0}\" not found in map {1}."
-            raise ValueError, msg.format(layer, tmxmap)
+            raise ValueError(msg.format(layer, tmxmap))
 
-    p = product(xrange(tmxmap.width), xrange(tmxmap.height))
+    p = product(range(tmxmap.width), range(tmxmap.height))
     if gid:
         points = [ (x,y) for (x,y) in p if layer_data[y][x] == gid ]
     else:
@@ -155,7 +154,7 @@ def buildDistributionRects(tmxmap, layer, tileset=None, real_gid=None):
     rects = simplify(points, tmxmap.tilewidth, tmxmap.tileheight)
     return rects
 
-
+#0과 1로 구성된 영역을 나타내는 rect를 .과 #을 이용해 확장된 4개의 group으로 반환한다
 def simplify(all_points, tilewidth, tileheight):
     """
     kludge:
@@ -199,7 +198,7 @@ def simplify(all_points, tilewidth, tileheight):
     making a list of rects, one for each tile on the map!
 
     """
-
+    #0과 1로 구성된 영역을 나타내는 rect를 .과 #로 표현하는 함수
     def pick_rect(points, rects):
         ox, oy = sorted([ (sum(p), p) for p in points ])[0][1]
         x = ox

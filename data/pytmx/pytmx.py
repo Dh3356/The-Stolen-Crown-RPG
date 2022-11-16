@@ -6,10 +6,10 @@ from .utils import decode_gid, types, parse_properties, read_points
 __all__ = ['TiledMap', 'TiledTileset', 'TiledLayer', 'TiledObject', 'TiledObjectGroup', 'TiledImageLayer']
 
 
-#
+#Tiled의 속성을 나타내는 클래스
 class TiledElement(object):#pyhon 2.2 이상, 3 미만에서는 클래스에 object를 명시적으로 상속해줘야 한다
     
-    #
+    #xml 노드에서 xml 속성 및 Tiled의 "properties"을 읽고 값을 object의 딕셔너리에 저장한다
     def set_properties(self, node):
         """
         read the xml attributes and tiled "properties" from a xml node and fill
@@ -156,7 +156,7 @@ class TiledMap(TiledElement):
 
         raise NotImplementedError
 
-    #area 내에 있는 타일들의 모음을 반환한다.(하위클래스에서 반드시 Override 하여 구현해야 한다)
+    #area 내에 있는 타일들의 모음을 반환한다.(하위클래스에서 반드시 Override 하여 구현해야 한다).
     def getTileImages(self, r, layer):
         """
         return a group of tiles in an area
