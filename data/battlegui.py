@@ -1,6 +1,6 @@
 """
 GUI components for battle states.
-전투 상태에 대한 GUI 구성 요소.
+전투 상태에 대한 GUI 구성 요소를 나타내는 파일
 """
 import sys
 import pygame as pg
@@ -14,7 +14,7 @@ if sys.version_info[0] == 2:
 class InfoBox(object):
     """
     Info box that describes attack damage and other battle related information.
-    공격 피해 및 기타 전투 관련 정보를 설명
+    공격 피해 및 기타 전투 관련 정보를 설명하는 클래스
     """
     def __init__(self, game_data, experience, gold):        # 게임 데이터, 경험치, 골드 받아오기
         self.game_data = game_data                          # 게임 데이터 저장
@@ -70,8 +70,8 @@ class InfoBox(object):
         Make the text for when the player selects items.
         플레이어가 항목을 선택할 때 사용할 텍스트를 만듭니다
         """
-        inventory = self.game_data['player inventory']
-        allowed_item_list = ['Healing Potion', 'Ether Potion']
+        inventory = self.game_data['player inventory']  #사용자의 보관함 가져와 저장
+        allowed_item_list = ['Healing Potion', 'Ether Potion']  
         title = 'SELECT ITEM'
         item_text_list = [title]
 
