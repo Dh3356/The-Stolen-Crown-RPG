@@ -3,8 +3,10 @@ import pygame as pg
 from . import constants as c
 
 class CollisionHandler(object):
-    """Handles collisions between the user, blockers and computer
-    characters"""
+    """
+    Handles collisions between the user, blockers and computer characters
+    사용자, 차단기 및 컴퓨터 문자 간의 충돌을 처리합니다.
+    """
     def __init__(self, player, blockers, sprites, portals, level):
         self.player = player
         self.static_blockers = blockers
@@ -16,6 +18,7 @@ class CollisionHandler(object):
     def make_blocker_list(self, blockers, sprites):
         """
         Return a combined list of sprite blockers and object blockers.
+        스프라이트 차단기 및 객체 차단기의 결합된 목록을 반환
         """
         blocker_list = []
 
@@ -30,6 +33,7 @@ class CollisionHandler(object):
     def update(self, keys, current_time):
         """
         Check for collisions between game objects.
+        게임 개체 간의 충돌을 확인합니다.
         """
         self.blockers = self.make_blocker_list(self.static_blockers,
                                                self.sprites)
@@ -54,6 +58,7 @@ class CollisionHandler(object):
     def check_for_portal(self):
         """
         Check for a portal to change level scene.
+        레벨 화면을을 변경할 포털 확인
         """
         portal = pg.sprite.spritecollideany(self.player, self.portals)
 
@@ -64,6 +69,7 @@ class CollisionHandler(object):
     def check_for_blockers(self):
         """
         Checks for collisions with blocker rects.
+        차단기 수정과의 충돌을 확인합니다.
         """
         player_collided = False
         sprite_collided_list = []
@@ -72,7 +78,7 @@ class CollisionHandler(object):
             if self.player.rect.colliderect(blocker):
                 player_collided = True
 
-        if player_collided:
+        if player_collided: 
             self.reset_after_collision(self.player)
             self.player.begin_resting()
 
@@ -96,7 +102,10 @@ class CollisionHandler(object):
             sprite.begin_auto_resting()
 
     def reset_after_collision(self, sprite):
-        """Put player back to original position"""
+        """
+        Put player back to original position
+        플레이어를 원래 위치로 되돌립니다.
+        """
         if sprite.x_vel != 0:
                 sprite.rect.x -= sprite.x_vel
         else:
@@ -105,6 +114,7 @@ class CollisionHandler(object):
     def check_for_battle(self):
         """
         Switch scene to battle 1/5 times if battles are allowed.
+        전투가 허용되는 경우 장면을 1/5로 전투로 전환합니다.
         """
         if self.level.allow_battles:
             self.level.game_data['battle counter'] -= 5

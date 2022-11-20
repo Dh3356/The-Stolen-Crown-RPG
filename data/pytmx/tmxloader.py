@@ -1,21 +1,21 @@
 import itertools
 import os
-
 import pygame
-
 from data.pytmx import pytmx
 from .constants import *
 
-
+#해당 파일을 import * 했을 때 변수 안에 있는 함수들을 임포트 대상으로 한다
 __all__ = ['load_pygame', 'load_tmx']
 
-
+#flag와 tile을 매개변수로 받아 비트 연산을 실행한 후 flip해 tile을 반환한다
 def handle_transformation(tile, flags):
+    #flags가 false가 아니면 비트 연산을 실행한다
     if flags:
         fx = flags & TRANS_FLIPX == TRANS_FLIPX
         fy = flags & TRANS_FLIPY == TRANS_FLIPY
         r = flags & TRANS_ROT == TRANS_ROT
 
+        #r이 false가 아니면 flip 한다
         if r:
             # not sure why the flip is required...but it is.
             newtile = pygame.transform.rotate(tile, 270)
@@ -32,7 +32,7 @@ def handle_transformation(tile, flags):
     else:
         return tile
 
-
+#각 tile 표변에 대한 최적의 플래그와 픽셀 형식을 결정한다.
 def smart_convert(original, colorkey, force_colorkey, pixelalpha):
     """
     this method does several tests on a surface to determine the optimal
@@ -73,6 +73,7 @@ def smart_convert(original, colorkey, force_colorkey, pixelalpha):
     return tile
 
 
+#이미지를 load한다
 def _load_images_pygame(tmxdata, mapping, *args, **kwargs):
     """
     Utility function to load images.
@@ -113,7 +114,7 @@ def _load_images_pygame(tmxdata, mapping, *args, **kwargs):
             force_colorkey = pygame.Color(*force_colorkey)
         except:
             msg = 'Cannot understand color: {0}'
-            print msg.format(force_colorkey)
+            print(msg.format(force_colorkey))
             raise ValueError
 
     # change background color into something nice
@@ -143,8 +144,8 @@ def _load_images_pygame(tmxdata, mapping, *args, **kwargs):
         width -= (w - ts.margin) % tilewidth
 
         # using product avoids the overhead of nested loops
-        p = itertools.product(xrange(ts.margin, height + ts.margin, tileheight),
-                              xrange(ts.margin, width + ts.margin, tilewidth))
+        p = itertools.product(range(ts.margin, height + ts.margin, tileheight),
+                              range(ts.margin, width + ts.margin, tilewidth))
 
         colorkey = getattr(ts, 'trans', None)
         if colorkey:
@@ -181,7 +182,7 @@ def _load_images_pygame(tmxdata, mapping, *args, **kwargs):
                 image = smart_convert(image, colorkey, force_colorkey, pixelalpha)
                 tmxdata.images.append(image)
 
-
+#TMX 파일과 image를 로드하고 사용할 준비가 된 TileMap 클래스를 반환한다
 def load_pygame(filename, *args, **kwargs):
     """
     PYGAME USERS: Use me.

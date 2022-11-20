@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
 """
-This class controls all the GUI for the player
-menu screen.
+This class controls all the GUI for the player menu screen.
+이 클래스는 플레이어 메뉴 화면의 모든 GUI를 제어합니다.
 """
 import sys
 import pygame as pg
@@ -11,6 +11,7 @@ from . import constants as c
 from . import tools
 
 #Python 2/3 compatibility.
+#Python 2/3 호환성.
 if sys.version_info[0] == 2:
     range = xrange
 
@@ -18,6 +19,7 @@ if sys.version_info[0] == 2:
 class SmallArrow(pg.sprite.Sprite):
     """
     Small arrow for menu.
+    메뉴의 작은 화살표
     """
     def __init__(self, info_box):
         super(SmallArrow, self).__init__()
@@ -31,6 +33,7 @@ class SmallArrow(pg.sprite.Sprite):
     def make_state_dict(self):
         """
         Make state dictionary.
+        상태 사전 만들기
         """
         state_dict = {'selectmenu': self.navigate_select_menu,
                       'itemsubmenu': self.navigate_item_submenu,
@@ -41,18 +44,23 @@ class SmallArrow(pg.sprite.Sprite):
     def navigate_select_menu(self, pos_index):
         """
         Nav the select menu.
+        선택 메뉴를 탐색합니다.
         """
         self.pos_list = self.make_select_menu_pos_list()
         self.rect.topleft = self.pos_list[pos_index]
 
     def navigate_item_submenu(self, pos_index):
-        """Nav the item submenu"""
+        """
+        Nav the item submenu
+        항목 하위 메뉴 탐색
+        """
         self.pos_list = self.make_item_menu_pos_list()
         self.rect.topleft = self.pos_list[pos_index]
 
     def navigate_magic_submenu(self, pos_index):
         """
         Nav the magic submenu.
+        마법 하위 메뉴를 탐색
         """
         self.pos_list = self.make_magic_menu_pos_list()
         self.rect.topleft = self.pos_list[pos_index]
@@ -60,6 +68,7 @@ class SmallArrow(pg.sprite.Sprite):
     def make_magic_menu_pos_list(self):
         """
         Make the list of possible arrow positions for magic submenu.
+        마법 하위 메뉴에 사용할 수 있는 화살표 위치 목록을 만듭니다.
         """
         pos_list = [(310, 119),
                     (310, 169)]
@@ -69,6 +78,7 @@ class SmallArrow(pg.sprite.Sprite):
     def make_select_menu_pos_list(self):
         """
         Make the list of possible arrow positions.
+        가능한 화살표 위치 목록을 작성합니다.
         """
         pos_list = []
 
@@ -81,6 +91,7 @@ class SmallArrow(pg.sprite.Sprite):
     def make_item_menu_pos_list(self):
         """
         Make the list of arrow positions in the item submenu.
+        항목 하위 메뉴에서 화살표 위치 목록을 만듭니다.
         """
         pos_list = [(300, 173),
                     (300, 223),
@@ -96,13 +107,16 @@ class SmallArrow(pg.sprite.Sprite):
     def update(self, pos_index):
         """
         Update arrow position.
+        화살표 위치를 업데이트
         """
         state_function = self.state_dict[self.state]
         state_function(pos_index)
 
     def draw(self, surface):
         """
-        Draw to surface"""
+        Draw to surface
+        화면(표면) 그리기
+        """
         surface.blit(self.image, self.rect)
 
 
@@ -119,6 +133,7 @@ class QuickStats(pg.sprite.Sprite):
     def make_image(self):
         """
         Make the surface for the gold box.
+        골드 상자의 표면을 만들어라.
         """
         stat_list = ['GOLD', 'health', 'magic'] 
         magic_health_list  = ['health', 'magic']
@@ -155,16 +170,18 @@ class QuickStats(pg.sprite.Sprite):
     def update(self):
         """
         Update gold.
+        골드 업데이트
         """
         self.image, self.rect = self.make_image()
 
     def draw(self, surface):
         """
         Draw to surface.
+        표면(화면) 그리기
         """
         surface.blit(self.image, self.rect)
 
-
+#정보 박스 클래스
 class InfoBox(pg.sprite.Sprite):
     def __init__(self, inventory, player_stats):
         super(InfoBox, self).__init__()
@@ -193,6 +210,7 @@ class InfoBox(pg.sprite.Sprite):
     def get_attack_power(self):
         """
         Calculate the current attack power based on equipped weapons.
+        장비된 무기를 바탕으로 현재의 공격력을 계산합니다.
         """
         weapon = self.inventory['equipped weapon']
         return self.inventory[weapon]['power']
@@ -200,6 +218,7 @@ class InfoBox(pg.sprite.Sprite):
     def get_defense_power(self):
         """
         Calculate the current defense power based on equipped weapons.
+        장비된 무기를 기반으로 현재의 방어력을 계산합니다.
         """
         defense_power = 0
         for armor in self.inventory['equipped armor']:
@@ -208,7 +227,10 @@ class InfoBox(pg.sprite.Sprite):
         return defense_power
 
     def make_state_dict(self):
-        """Make the dictionary of state methods"""
+        """
+        Make the dictionary of state methods
+        상태 방법 사전 만들기
+        """
         state_dict = {'stats': self.show_player_stats,
                       'items': self.show_items,
                       'magic': self.show_magic,
@@ -218,7 +240,10 @@ class InfoBox(pg.sprite.Sprite):
 
 
     def show_player_stats(self):
-        """Show the player's main stats"""
+        """
+        Show the player's main stats
+        플레이어의 기본 통계 표시
+        """
         title = 'STATS'
         stat_list = ['Level', 'experience to next level',
                      'health', 'magic', 'Attack Power', 
@@ -237,7 +262,7 @@ class InfoBox(pg.sprite.Sprite):
                                          stat[1:],
                                          self.player_stats[stat])
             elif stat == 'Attack Power':
-				text = "{}: {}".format(stat, self.get_attack_power()) 
+                text = "{}: {}".format(stat, self.get_attack_power())
             elif stat == 'Defense Power':
                 text = "{}: {}".format(stat, self.get_defense_power())
             elif stat == 'gold':
@@ -253,7 +278,10 @@ class InfoBox(pg.sprite.Sprite):
 
 
     def show_items(self):
-        """Show list of items the player has"""
+        """
+        Show list of items the player has
+        플레이어가 가지고 있는 항목 목록 표시
+        """
         title = 'ITEMS'
         potions = ['POTIONS']
         weapons = ['WEAPONS']
@@ -291,7 +319,10 @@ class InfoBox(pg.sprite.Sprite):
 
 
     def assign_slots(self, item_list, starty, weapon_or_armor=False):
-        """Assign each item to a slot in the menu"""
+        """
+        Assign each item to a slot in the menu
+        메뉴의 슬롯에 각 항목 할당
+        """
         if len(item_list) > 3:
             for i, item in enumerate(item_list[:3]):
                 posx = 80
@@ -310,6 +341,7 @@ class InfoBox(pg.sprite.Sprite):
     def assign_magic_slots(self, magic_list, starty):
         """
         Assign each magic spell to a slot in the menu.
+        각 마법 주문을 메뉴의 슬롯에 할당합니다.
         """
         for i, spell in enumerate(magic_list):
             posx = 120
@@ -317,7 +349,10 @@ class InfoBox(pg.sprite.Sprite):
             self.slots[(posx, posy)] = spell
 
     def blit_item_lists(self, surface):
-        """Blit item list to info box surface"""
+        """
+        Blit item list to info box surface
+        항목 목록을 정보 상자 표면에 만들기
+        """
         for coord in self.slots:
             item = self.slots[coord]
 
@@ -331,7 +366,10 @@ class InfoBox(pg.sprite.Sprite):
             surface.blit(text_image, text_rect)
 
     def show_magic(self):
-        """Show list of magic spells the player knows"""
+        """
+        Show list of magic spells the player knows
+        플레이어가 알고 있는 마법 주문 목록 표시
+        """
         title = 'MAGIC'
         item_list = []
         for item in self.inventory:
@@ -355,13 +393,17 @@ class InfoBox(pg.sprite.Sprite):
     def show_nothing(self):
         """
         Show nothing when the menu is opened from a level.
+        라벨에서 메뉴를 열 때 아무것도 표시하지 않습니다.
         """
         self.image = pg.Surface((1, 1))
         self.rect = self.image.get_rect()
         self.image.fill(c.BLACK_BLUE)
 
     def make_blank_info_box(self, title):
-        """Make an info box with title, otherwise blank"""
+        """
+        Make an info box with title, otherwise blank
+        제목을 사용하여 정보 상자 만들기, 그렇지 않으면 빈칸 만들기
+        """
         image = setup.GFX['playerstatsbox']
         rect = image.get_rect(left=285, top=35)
         centerx = rect.width / 2
@@ -378,23 +420,31 @@ class InfoBox(pg.sprite.Sprite):
 
 
     def update(self):
+        """
+        state 업데이트하기
+        """
         state_function = self.state_dict[self.state]
         state_function()
 
 
     def draw(self, surface):
-        """Draw to surface"""
+        """
+        Draw to surface
+        표면(화면) 그리기
+        """
         surface.blit(self.image, self.rect)
 
 
+# 선택된 박스 클래스
 class SelectionBox(pg.sprite.Sprite):
     def __init__(self):
         self.font = pg.font.Font(setup.FONTS[c.MAIN_FONT], 22)
         self.image, self.rect = self.make_image()
 
+    # 이미지 만들기 메소드
     def make_image(self):
-        choices = ['Items', 'Magic', 'Stats']
-        image = setup.GFX['goldbox']
+        choices = ['Items', 'Magic', 'Stats']   #선택할 수 있는 항목 item, magic, stats
+        image = setup.GFX['goldbox']            #goldbox 이미지 가져오기
         rect = image.get_rect(left=10, top=425)
 
         surface = pg.Surface(rect.size)
@@ -409,10 +459,13 @@ class SelectionBox(pg.sprite.Sprite):
         return surface, rect
 
     def draw(self, surface):
-        """Draw to surface"""
+        """
+        Draw to surface
+        표면(화면)그리기
+        """
         surface.blit(self.image, self.rect)
 
-
+# 메뉴 GUI 클래스
 class MenuGui(object):
     def __init__(self, level, inventory, stats):
         self.level = level
@@ -429,37 +482,40 @@ class MenuGui(object):
         self.allow_input = False
 
     def check_for_input(self, keys):
-        """Check for input"""
+        """
+        Check for input
+        입력 확인
+        """
         if self.allow_input:
-            if keys[pg.K_DOWN]:
+            if keys[pg.K_DOWN]:         #방향키 아래
                 if self.arrow_index < len(self.arrow.pos_list) - 1:
                     self.notify(c.CLICK)
                     self.arrow_index += 1
                     self.allow_input = False
-            elif keys[pg.K_UP]:
+            elif keys[pg.K_UP]:         #방향키 위
                 if self.arrow_index > 0:
                     self.notify(c.CLICK)
                     self.arrow_index -= 1
                     self.allow_input = False
-            elif keys[pg.K_RIGHT]:
+            elif keys[pg.K_RIGHT]:      #방향키 오른쪽
                 if self.info_box.state == 'items':
                     if not self.arrow.state == 'itemsubmenu':
                         self.notify(c.CLICK)
                         self.arrow_index = 0
                     self.arrow.state = 'itemsubmenu'
-                elif self.info_box.state == 'magic':
+                elif self.info_box.state == 'magic':    
                     if not self.arrow.state == 'magicsubmenu':
                         self.notify(c.CLICK)
                         self.arrow_index = 0
                     self.arrow.state = 'magicsubmenu'
                 self.allow_input = False
 
-            elif keys[pg.K_LEFT]:
+            elif keys[pg.K_LEFT]:   #방향키 왼쪽
                 self.notify(c.CLICK)
                 self.arrow.state = 'selectmenu'
                 self.arrow_index = 0
                 self.allow_input = False
-            elif keys[pg.K_SPACE]:
+            elif keys[pg.K_SPACE]:  # 방향키 스페이스바
                 self.notify(c.CLICK2)
                 if self.arrow.state == 'selectmenu':
                     if self.arrow_index == 0:
@@ -478,14 +534,14 @@ class MenuGui(object):
                     self.select_magic()
 
                 self.allow_input = False
-            elif keys[pg.K_RETURN]:
+            elif keys[pg.K_RETURN]:     # return 키
                 self.level.state = 'normal'
                 self.info_box.state = 'invisible'
                 self.allow_input = False
                 self.arrow_index = 0
                 self.arrow.state = 'selectmenu'
 
-        if (not keys[pg.K_DOWN]
+        if (not keys[pg.K_DOWN]     # 모든 키가 아닐 때
                 and not keys[pg.K_UP]
                 and not keys[pg.K_RETURN]
                 and not keys[pg.K_SPACE]
@@ -496,6 +552,7 @@ class MenuGui(object):
     def notify(self, event):
         """
         Notify all observers of event.
+        모든 관찰자에게 이벤트를 알립니다.
         """
         for observer in self.observers:
             observer.on_notify(event)
@@ -503,6 +560,7 @@ class MenuGui(object):
     def select_item(self):
         """
         Select item from item menu.
+        아이템 메뉴에서 아이템 선택
         """
         health = self.game_data['player stats']['health']
         posx = self.arrow.rect.x - 220
@@ -536,6 +594,7 @@ class MenuGui(object):
     def select_magic(self):
         """
         Select spell from magic menu.
+        마법 메뉴에서 spell(사용할 마법) 선택
         """
         health = self.game_data['player stats']['health']
         magic = self.game_data['player stats']['magic']
@@ -543,39 +602,44 @@ class MenuGui(object):
         posy = self.arrow.rect.y - 39
 
         if (posx, posy) in self.info_box.slots:
-            if self.info_box.slots[(posx, posy)][:4] == 'Cure':
+            if self.info_box.slots[(posx, posy)][:4] == 'Cure': # cure(치료) 마법 선택시
                self.use_cure_spell()
 
     def use_cure_spell(self):
         """
         Use cure spell to heal player.
+        치료 마법을 사용하여 플레이어를 치료합니다.
         """
         health = self.game_data['player stats']['health']
         magic = self.game_data['player stats']['magic']
         inventory = self.game_data['player inventory']
 
-        if health['current'] != health['maximum']:
-            if magic['current'] >= inventory['Cure']['magic points']:
+        if health['current'] != health['maximum']:  # 현재 체력이 최대 체력이 아니라면
+            if magic['current'] >= inventory['Cure']['magic points']:   #현재 마법 포인트가 치료할 수 있는 마법 포인트보다 클 떄
                 self.notify(c.POWERUP)
                 magic['current'] -= inventory['Cure']['magic points']
                 health['current'] += inventory['Cure']['power']
-                if health['current'] > health['maximum']:
+                if health['current'] > health['maximum']:   # 현재 체력이 최대 체력보다 높게 추가되었다면
                     health['current'] = health['maximum']
 
     def drink_potion(self, potion, stat, value):
         """
         Drink potion and change player stats.
+        물약을 마시고 플레이어 상태를 변경한다.
         """
-        if stat['current'] != stat['maximum']:
+        if stat['current'] != stat['maximum']:  #현재 상태가 최대 상태가 아닐 때
             self.notify(c.POWERUP)
-            self.inventory[potion]['quantity'] -= 1
-            stat['current'] += value
-            if stat['current'] > stat['maximum']:
-                stat['current'] = stat['maximum']
-            if not self.inventory[potion]['quantity']:
-                del self.inventory[potion]
+            self.inventory[potion]['quantity'] -= 1 # 물약 갯수 -1
+            stat['current'] += value                # 현재 상태에 value만큼 더하기
+            if stat['current'] > stat['maximum']:   #현재 상태가 최대 상태보다 크게 더해졌을 때
+                stat['current'] = stat['maximum']   # 현재 상태를 최대 상태와 동일하게 변경
+            if not self.inventory[potion]['quantity']: # 보관함에 있는 포션의 양이 없다면
+                del self.inventory[potion]              # 보관함에서 포션 삭제
 
     def update(self, keys):
+        """
+        업데이트
+        """
         self.info_box.update()
         self.gold_box.update()
         self.arrow.update(self.arrow_index)
@@ -583,6 +647,9 @@ class MenuGui(object):
 
 
     def draw(self, surface):
+        """
+        그리기 메소드
+        """
         self.gold_box.draw(surface)
         self.info_box.draw(surface)
         self.selection_box.draw(surface)

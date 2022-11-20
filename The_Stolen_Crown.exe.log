@@ -1,0 +1,11 @@
+Traceback (most recent call last):
+  File "The_Stolen_Crown.py", line 14, in <module>
+    main()
+  File "data\main.pyc", line 58, in main
+  File "data\tools.pyc", line 85, in main
+  File "data\tools.pyc", line 38, in update
+  File "data\states\shop.pyc", line 131, in update
+  File "data\states\shop.pyc", line 137, in normal_update
+  File "data\shopgui.pyc", line 628, in update
+  File "data\shopgui.pyc", line 500, in buy_sell
+  File "data\shopgui.pyc", line 521, in check_for_sellable_items
