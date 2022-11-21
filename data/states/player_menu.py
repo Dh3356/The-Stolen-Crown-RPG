@@ -8,7 +8,9 @@ from .. import tools, setup, menugui
 from .. import constants as c
 
 
+#player가 인벤토리나 아이템등을 확인하는 상태를 제어하는 클래스
 class Player_Menu(object):
+    #객체 멤버변수 초기화
     def __init__(self, game_data, level):
         inventory = game_data['player inventory']
         stats = game_data['player stats']
@@ -17,6 +19,7 @@ class Player_Menu(object):
         self.background = self.make_background()
         self.gui = menugui.MenuGui(level, inventory, stats)
 
+    #black/blue컬러의 배경화면을 생성하는 메소드
     def make_background(self):
         """
         Makes the generic black/blue background.
@@ -33,6 +36,7 @@ class Player_Menu(object):
 
         return background
 
+    #플레이어의 이미지를 생성하여 반환하는 메소드
     def make_sprite(self, key, coordx, coordy, x=40, y=25):
         """
         Get the image for the player.
@@ -52,10 +56,12 @@ class Player_Menu(object):
 
         return sprite
 
+    #gui를 업데이트하는 메소드
     def update(self, surface, keys):
         self.gui.update(keys)
         self.draw(surface)
 
+    #새로 만든 gui를 surface에 blit하는 메소드
     def draw(self, surface):
         surface.blit(self.background.image, self.background.rect)
         self.gui.draw(surface)
