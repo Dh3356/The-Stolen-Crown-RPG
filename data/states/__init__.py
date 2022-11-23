@@ -1,1 +1,1 @@
-__author__ = 'justinarmstrong'
+__author__ = 'justinarmstrong' # 제작자 : justinarmstrong

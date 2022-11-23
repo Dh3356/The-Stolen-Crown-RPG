@@ -7,8 +7,9 @@ from .. import constants as c
 class CreditEntry(object):
     """
     The text for each credit for the game.
+    게임 엔딩 시 나오는 크레딧 텍스트를 설정할 수 있다.
     """
-    def __init__(self, level):
+    def __init__(self, level):#해당 객체에 대한 인스턴스를 생성한다.
         self.alpha = 0
         self.font = pg.font.Font(setup.FONTS[c.MAIN_FONT], 22)
         self.credit_sprites = self.make_credits()
@@ -22,6 +23,7 @@ class CreditEntry(object):
     def make_credits(self):
         """
         Make a list of lists for all the credit surfaces.
+        크레딧 텍스트를 여기서 정할 수 있다.
         """
         credits = [['THE STOLEN CROWN', 'A Fantasy RPG'],
                    ['PROGRAMMING AND GAME DESIGN', 'Justin Armstrong'],
@@ -71,6 +73,7 @@ class CreditEntry(object):
     def make_state_dict(self):
         """
         Make the dictionary of state methods used to update credit.
+        엔딩 크레딧으로 바꾸기 위한 상태를 저장할 딕셔너리를 만든다.
         """
         state_dict = {c.TRANSITION_IN: self.transition_in, 
                       c.TRANSITION_OUT: self.transition_out,
@@ -78,7 +81,7 @@ class CreditEntry(object):
 
         return state_dict
 
-    def transition_in(self):
+    def transition_in(self):#엔딩 크레딧이 나올 때 페이드 인 처리를 한다.
         for credit in self.current_credit:
             credit.image = pg.Surface(credit.rect.size).convert()
             credit.image.set_colorkey(c.BLACK)
@@ -91,7 +94,7 @@ class CreditEntry(object):
             self.state = c.NORMAL
             self.timer = self.current_time
 
-    def transition_out(self):
+    def transition_out(self):#엔딩 크레딧이 나올 때 페이드 아웃 처리를 한다.
         for credit in self.current_credit:
             credit.image = pg.Surface(credit.rect.size).convert()
             credit.image.set_colorkey(c.BLACK)
@@ -109,11 +112,11 @@ class CreditEntry(object):
             self.current_credit = self.credit_sprites[self.index]
             self.state = c.TRANSITION_IN
 
-    def normal_update(self):
+    def normal_update(self): #만약 타이머와 현재 시간의 차가 4500이면 상태를 바꾼다.
         if (self.current_time - self.timer) > 4500:
             self.state = c.TRANSITION_OUT
 
-    def update(self, current_time):
+    def update(self, current_time): #장면을 업데이트한다.
         self.current_time = current_time
         update_method = self.state_dict[self.state]
         update_method()
@@ -121,6 +124,7 @@ class CreditEntry(object):
     def draw(self, surface):
         """
         Draw the current credit to main surface.
+        메인 표면에 크레딧 화면을 그린다
         """
         for credit_sprite in self.current_credit:
             surface.blit(credit_sprite.image, credit_sprite.rect)
@@ -130,7 +134,7 @@ class Credits(tools._State):
     """
     End Credits Scene.
     """
-    def __init__(self):
+    def __init__(self):#해당 객체에 대한 인스턴스를 생성한다.
         super(Credits, self).__init__()
         self.name = c.CREDITS
         self.music_title = None
@@ -142,6 +146,7 @@ class Credits(tools._State):
     def startup(self, current_time, game_data):
         """
         Initialize data at scene start. 
+        엔딩 크레딧이 나올 때 데이터를 초기화한다.
         """
         self.game_data = game_data
         self.music = setup.MUSIC['overworld']
@@ -154,13 +159,15 @@ class Credits(tools._State):
     def update(self, surface, keys, current_time):
         """
         Update scene.
+        장면을 업데이트한다.
         """
         self.credit.update(current_time)
         self.draw_scene(surface)
 
     def draw_scene(self, surface):
         """
-        Draw all graphics to the window surface.
+        Draw all graphics to the window surface..
+        엔딩 크레딧을 그린다.
         """
         surface.blit(self.background, (0, 0))
         self.credit.draw(surface)

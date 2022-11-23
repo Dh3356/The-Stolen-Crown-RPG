@@ -14,8 +14,10 @@ if sys.version_info[0] == 2:
 class Arrow(pg.sprite.Sprite):
     """
     Arrow to select restart or saved gamed.
+    죽었을 때 재시작할지 저장된 시점부터 다시 할지 선택할 화살표를 구현한다.
     """
     def __init__(self, x, y):
+        #해당 객체에 대한 인스턴스를 생성한다
         super(Arrow, self).__init__()
         self.image = setup.GFX['smallarrow']
         self.rect = self.image.get_rect(x=x,
@@ -28,6 +30,7 @@ class Arrow(pg.sprite.Sprite):
     def notify(self, event):
         """
         Notify all observers of event.
+        모든 옵저버에 이벤트가 일어났음을 알린다.
         """
         for observer in self.observers:
             observer.on_notify(event)
@@ -35,6 +38,7 @@ class Arrow(pg.sprite.Sprite):
     def update(self, keys):
         """
         Update arrow position.
+         화살표의 위치를 업데이트한다.
         """
         if self.allow_input:
             if keys[pg.K_DOWN] and not keys[pg.K_UP] and self.index == 0:
@@ -55,8 +59,10 @@ class Arrow(pg.sprite.Sprite):
 class DeathScene(tools._State):
     """
     Scene when the player has died.
+    플레이어가 죽었을 때 사망 시 장면을  출력한다.
     """
     def __init__(self):
+        #해당 객체에 대한 인스턴스를 생성한다.
         super(DeathScene, self).__init__()
         self.next = c.TOWN
         self.music = setup.MUSIC['shop_theme']
@@ -64,6 +70,7 @@ class DeathScene(tools._State):
         self.music_title = 'shop_theme'
 
     def startup(self, current_time, game_data):
+        #사망 시 장면이 나올 때 데이터를 초기화한다.
         self.game_data = game_data
         self.font = pg.font.Font(setup.FONTS[c.MAIN_FONT], 22)
         self.background = pg.Surface(setup.SCREEN_RECT.size)
@@ -89,6 +96,7 @@ class DeathScene(tools._State):
     def notify(self, event):
         """
         Notify all observers of event.
+        모든 옵저버에게 사망 이벤트가 나왔음을 알린다.
         """
         for observer in self.observers:
             observer.on_notify(event)
@@ -96,6 +104,7 @@ class DeathScene(tools._State):
     def make_message_box(self):
         """
         Make the text box informing of death.
+        죽음에 대한 정보를 보여줄 텍스트 박스를 만든다. 
         """
         box_image = setup.GFX['dialoguebox']
         box_rect = box_image.get_rect()
@@ -129,6 +138,7 @@ class DeathScene(tools._State):
     def make_state_dict(self):
         """
         Make the dicitonary of state methods for the scene.
+        죽음 장면을 위한 상태 메소드 딕셔너리를 만든다.
         """
         state_dict = {c.TRANSITION_IN: self.transition_in,
                       c.TRANSITION_OUT: self.transition_out,
@@ -139,6 +149,7 @@ class DeathScene(tools._State):
     def update(self, surface, keys, *args):
         """
         Update scene.
+        장면을 업데이트한다.
         """
         update_level = self.state_dict[self.state]
         update_level(keys)
@@ -147,6 +158,7 @@ class DeathScene(tools._State):
     def transition_in(self, *args):
         """
         Transition into scene with a fade.
+        페이드인 효과를 준다.
         """
         self.transition_surface.set_alpha(self.alpha)
         self.alpha -= c.TRANSITION_SPEED
@@ -157,6 +169,7 @@ class DeathScene(tools._State):
     def transition_out(self, *args):
         """
         Transition out of scene with a fade.
+        페이드아웃 효과를 준다.
         """
         self.transition_surface.set_alpha(self.alpha)
         self.alpha += c.TRANSITION_SPEED
@@ -164,6 +177,7 @@ class DeathScene(tools._State):
             self.done = True
 
     def normal_update(self, keys):
+        #업데이트 해야할 항목들을 업데이트시킨다.
         self.arrow.update(keys)
         self.check_for_input(keys)
 
@@ -171,6 +185,7 @@ class DeathScene(tools._State):
         """
         Check if player wants to restart from last save point
         or just start from the beginning of the game.
+        플레이어가 재시작하는지 아니면 세이브 지점부터 다시 하는지를 체크한다.
         """
         if keys[pg.K_SPACE]:
             if self.arrow.index == 0:
@@ -184,6 +199,7 @@ class DeathScene(tools._State):
     def draw_level(self, surface):
         """
         Draw background, player, and message box.
+         플레이어, 메시지 박스, 배경을 그린다.
         """
         surface.blit(self.background, (0, 0))
         surface.blit(self.player.image, self.player.rect)
