@@ -2,8 +2,8 @@ from __future__ import division
 import itertools
 import math, random, copy, sys
 import pygame as pg
-from data import setup, observer
-from data import constants as c
+from .. import setup, observer
+from .. import constants as c
 
 #Python 2/3 compatibility.
 if sys.version_info[0] == 2:
