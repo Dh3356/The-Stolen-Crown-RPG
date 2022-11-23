@@ -1,6 +1,6 @@
 __author__ = 'justinarmstrong'
 import pygame as pg
-from data import constants as c
+from .. import constants as c
 
 #장소를 변경할 때 사용하는 클래스
 class Portal(pg.sprite.Sprite):
