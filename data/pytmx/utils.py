@@ -1,7 +1,9 @@
-from itertools import tee, islice, izip, product
+import itertools
 from collections import defaultdict
 from pygame import Rect
 from .constants import *
+
+
 
 #text를 split해 튜플 형태로 반환한다
 def read_points(text):
@@ -91,14 +93,14 @@ types.update({
 #매개변수로 받은 iterable을 a, b에 각각 저장하고 a,b 쌍을 가지는 튜플을 반환한다
 def pairwise(iterable):
     # return a list as a sequence of pairs
-    a, b = tee(iterable)
+    a, b = itertools.tee(iterable)
     next(b, None)
-    return izip(a, b)
+    return zip(a, b)
 
 #l을 n씩 잘라서 tuple에 넣은 후  iterable로 반환한다
 def group(l, n):
     # return a list as a sequence of n tuples
-    return izip(*(islice(l, i, None, n) for i in range(n)))
+    return zip(*(itertools.islice(l, i, None, n) for i in range(n)))
 
 #매개변수로 받은 real_gid의 분포를 나타내는 겹치지 않는 직사각형 집합을 반환한다.
 def buildDistributionRects(tmxmap, layer, tileset=None, real_gid=None):
@@ -145,7 +147,7 @@ def buildDistributionRects(tmxmap, layer, tileset=None, real_gid=None):
             msg = "Layer \"{0}\" not found in map {1}."
             raise ValueError(msg.format(layer, tmxmap))
 
-    p = product(range(tmxmap.width), range(tmxmap.height))
+    p = itertools.product(range(tmxmap.width), range(tmxmap.height))
     if gid:
         points = [ (x,y) for (x,y) in p if layer_data[y][x] == gid ]
     else:
