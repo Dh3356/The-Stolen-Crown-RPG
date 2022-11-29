@@ -100,7 +100,7 @@ def pairwise(iterable):
 #l을 n씩 잘라서 tuple에 넣은 후  iterable로 반환한다
 def group(l, n):
     # return a list as a sequence of n tuples
-    return zip(*(itertools.islice(l, i, None, n) for i in range(n)))
+    return zip(*(itertools.permutations(l,n)))
 
 #매개변수로 받은 real_gid의 분포를 나타내는 겹치지 않는 직사각형 집합을 반환한다.
 def buildDistributionRects(tmxmap, layer, tileset=None, real_gid=None):
