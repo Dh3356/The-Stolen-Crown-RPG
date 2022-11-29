@@ -554,7 +554,7 @@ class TiledLayer(TiledElement):
         if encoding == "base64":
             import base64
 
-            data = base64.decodebytes(data_node.text.strip("="))
+            data = base64.b64decode(data_node.text.strip("="))
 
         elif encoding == "csv":
             next_gid = list(map(int, "".join(
