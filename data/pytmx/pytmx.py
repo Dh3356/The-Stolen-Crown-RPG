@@ -539,7 +539,7 @@ class TiledLayer(TiledElement):
         parse a layer element
         """
         from data.pytmx.utils import group
-        from itertools import product, imap
+        from itertools import product
         from struct import unpack
         import array
 
@@ -552,14 +552,14 @@ class TiledLayer(TiledElement):
 
         encoding = data_node.get("encoding", None)
         if encoding == "base64":
-            from base64 import decodestring
+            import base64
 
-            data = decodestring(data_node.text.strip())
+            data = base64.b64decode(data_node.text.strip("="))
 
         elif encoding == "csv":
-            next_gid = imap(int, "".join(
-                line.strip() for line in data_node.text.strip()
-            ).split(","))
+            next_gid = list(map(int, "".join(
+                line.strip() for line in data_node.text.strip() 
+            ).split(",")))
 
         elif encoding:
             msg = "TMX encoding type: {0} is not supported."
@@ -596,7 +596,7 @@ class TiledLayer(TiledElement):
         elif data:
             # data is a list of gids. cast as 32-bit ints to format properly
             # create iterator to efficiently parse data
-            next_gid = imap(lambda i: unpack("<L", "".join(i))[0], group(data, 4))
+            next_gid = list(map(lambda i: unpack("<L", "".join(i))[0], group(data, 4)))
 
         # using bytes here limits the layer to 256 unique tiles
         # may be a limitation for very detailed maps, but most maps are not

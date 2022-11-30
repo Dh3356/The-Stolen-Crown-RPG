@@ -3,7 +3,10 @@ monsters
 적과 전투 상태를 다룬다.
 """
 import random, sys
-from itertools import izip
+try:
+      from itertools import izip
+except ImportError:
+       izip = zip
 import pygame as pg
 from .. import tools, battlegui, observer, setup
 from .. components import person, attack, attackitems
