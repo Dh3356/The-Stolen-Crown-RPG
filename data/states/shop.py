@@ -10,6 +10,10 @@ import copy
 import pygame as pg
 from .. import tools, setup, shopgui
 from .. import constants as c
+import googletrans#구글 번역 API
+
+#구글 번역 변수 translator.translate(문장, dest='ko').text 함수를 사용해 한글 문자열로 번역 가능
+translator = googletrans.Translator()
 
 #모든 상점 상태들의 부모 클래스가 되는 클래스
 #weapon 상점, armour상점, magic 상점, potion 상점의 부모 클래스(여관도 포함)
@@ -67,14 +71,14 @@ class Shop(tools._State):
         """
         Make the dialogue for when the player buys an item.
         """
-        return ['Item purchased.']
+        return [translator.translate('Item purchased.', dest='ko').text]
 
     #player가 아이템을 판매할 시 출력하는 구문을 반환하는 메소드
     def make_accept_sale_dialogue(self):
         """
         Make the dialogue for when the player sells an item.
         """
-        return ['Item sold.']
+        return [translator.translate('Item sold.', dest='ko').text]
 
     #상점에서 구매할 수 있는 아이템 리스트를 구현하는 명시적 메소드(내용x)
     def make_purchasable_items(self):
@@ -207,20 +211,20 @@ class Inn(Shop):
         """
         Make the list of dialogue phrases.
         """
-        return ["Welcome to the " + self.name + "!",
-                "Would you like a room to restore your health?"]
+        return [translator.translate("Welcome to the " + self.name + "!",
+                "Would you like a room to restore your health?", dest='ko').text]
 
     #player가 아이템을 구매(휴식)하면 출력하는 구문 반환하는 메소드
     def make_accept_dialogue(self):
         """
         Make the dialogue for when the player buys an item.
         """
-        return ['Your health has been replenished and your game saved!']
+        return [translator.translate('Your health has been replenished and your game saved!', dest='ko').text]
 
     #구매 가능한 아이템(휴식)과 관련된 값들을 딕셔너리 형태로 구현하는 메소드
     def make_purchasable_items(self):
         """Make list of items to be chosen"""
-        dialogue = 'Rent a room (30 gold)'
+        dialogue = translator.translate('Rent a room (30 gold)', dest='ko').text
 
         item = {'type': 'room',
                 'price': 30,
@@ -239,22 +243,22 @@ class WeaponShop(Shop):
         super(WeaponShop, self).__init__()
         self.name = c.WEAPON_SHOP
         self.key = 'weaponman'
-        self.sell_items = ['Long Sword', 'Rapier']
+        self.sell_items = [translator.translate('Long Sword', dest='ko').text, translator.translate('Rapier', dest='ko').text]
 
 
     #대화 구문 리스트를 구현하여 반환하는 메소드
     def make_dialogue(self):
         """Make the list of dialogue phrases"""
-        shop_name = "{}{}".format(self.name[0].upper(), self.name[1:])
-        return ["Welcome to the " + shop_name + "!",
-                "What weapon would you like to buy?"]
+        shop_name = translator.translate("{}{}".format(self.name[0].upper(), self.name[1:]), dest='ko').text
+        return [translator.translate("Welcome to the " + shop_name + "!",
+                "What weapon would you like to buy?", dest='ko').text]
 
 
     #구매 가능한 아이템과 관련 정보를 딕셔너리로 구현하여 반환하는 메소드
     def make_purchasable_items(self):
         """Make list of items to be chosen"""
-        longsword_dialogue = 'Long Sword (150 gold)'
-        rapier_dialogue = 'Rapier (50 gold)'
+        longsword_dialogue = translator.translate('Long Sword (150 gold)', dest='ko').text
+        rapier_dialogue = translator.translate('Rapier (50 gold)', dest='ko').text
 
         item2 = {'type': 'Long Sword',
                 'price': 150,
@@ -282,20 +286,20 @@ class ArmorShop(Shop):
         super(ArmorShop, self).__init__()
         self.name = c.ARMOR_SHOP
         self.key = 'armorman'
-        self.sell_items = ['Chain Mail', 'Wooden Shield']
+        self.sell_items = [translator.translate('Chain Mail', dest='ko').text, translator.translate('Wooden Shield', dest='ko').text]
 
     #대화 구문을 반환하는 메소드
     def make_dialogue(self):
         """Make the list of dialogue phrases"""
-        shop_name = "{}{}".format(self.name[0].upper(), self.name[1:])
-        return ["Welcome to the " + shop_name + "!",
-                "Would piece of armor would you like to buy?"]
+        shop_name = translator.translate("{}{}".format(self.name[0].upper(), self.name[1:]), dest='ko').text
+        return [translator.translate("Welcome to the " + shop_name + "!",
+                "Would piece of armor would you like to buy?", dest='ko').text]
 
     #구매 가능한 아이템과 관련 정보를 딕셔너리로 구현하여 반환하는 메소드
     def make_purchasable_items(self):
         """Make list of items to be chosen"""
-        chainmail_dialogue = 'Chain Mail (50 gold)'
-        shield_dialogue = 'Wooden Shield (75 gold)'
+        chainmail_dialogue = translator.translate('Chain Mail (50 gold)', dest='ko').text
+        shield_dialogue = translator.translate('Wooden Shield (75 gold)', dest='ko').text
 
         item = {'type': 'Chain Mail',
                 'price': 50,
@@ -325,15 +329,15 @@ class MagicShop(Shop):
     #대화 구문을 반환하는 메소드
     def make_dialogue(self):
         """Make the list of dialogue phrases"""
-        shop_name = "{}{}".format(self.name[0].upper(), self.name[1:])
-        return ["Welcome to the " + shop_name + "!",
-                "Would magic spell would you like to buy?"]
+        shop_name = translator.translate("{}{}".format(self.name[0].upper(), self.name[1:]), dest='ko').text
+        return [translator.translate("Welcome to the " + shop_name + "!",
+                "Would magic spell would you like to buy?", dest='ko').text]
 
     #구매 가능한 아이템과 관련 정보를 딕셔너리로 구현하여 반환하는 메소드
     def make_purchasable_items(self):
         """Make list of items to be chosen"""
-        fire_dialogue = 'Fire Blast (150 gold)'
-        cure_dialogue = 'Cure (50 gold)'
+        fire_dialogue = translator.translate('Fire Blast (150 gold)', dest='ko').text
+        cure_dialogue = translator.translate('Cure (50 gold)', dest='ko').text
 
         item1 = {'type': 'Cure',
                  'price': 50,
@@ -365,16 +369,15 @@ class PotionShop(Shop):
     #대화 구문을 반환하는 메소드
     def make_dialogue(self):
         """Make the list of dialogue phrases"""
-        shop_name = "{}{}".format(self.name[0].upper(), self.name[1:])
-        return ["Welcome to the " + shop_name + "!",
-                "What potion would you like to buy?"]
+        shop_name = translator.translate("{}{}".format(self.name[0].upper(), self.name[1:]), dest='ko').text
+        return [translator.translate("Welcome to the " + shop_name + "!",
+                "What potion would you like to buy?", dest='ko').text]
 
     #구매 가능한 아이템과 관련 정보를 딕셔너리로 구현하여 반환하는 메소드
     def make_purchasable_items(self):
         """Make list of items to be chosen"""
-        healing_dialogue = 'Healing Potion (15 gold)'
-        ether_dialogue = 'Ether Potion (15 gold)'
-
+        healing_dialogue = translator.translate('Healing Potion (15 gold)', dest='ko').text
+        ether_dialogue = translator.translate('Ether Potion (15 gold)', dest='ko').text
 
         item = {'type': 'Healing Potion',
                 'price': 15,
