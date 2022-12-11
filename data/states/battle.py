@@ -92,10 +92,10 @@ class Battle(tools._State): #적과의 전투 돌입 시에 상태를 다룰 수
         """
         new_dict = {c.OVERWORLD: 1,
                     c.DUNGEON: 2,
-                    c.DUNGEON2: 3,#지하 1층. 
+                    c.DUNGEON2: 3,#지하 1층 
                     c.DUNGEON3: 4,#지하 2층
-                    c.DUNGEON4: 3,#지하 3층
-                    c.DUNGEON5: 6}#보스방
+                    c.DUNGEON4: 3,#지하 1층
+                    c.DUNGEON5: 6}#지하 2층 보스방
 
         return new_dict
 
