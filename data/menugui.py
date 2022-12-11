@@ -25,13 +25,14 @@ class SmallArrow(pg.sprite.Sprite):
     Small arrow for menu.
     메뉴의 작은 화살표
     """
-    def __init__(self, info_box):
+    def __init__(self, info_box, inventory): 
         super(SmallArrow, self).__init__()
         self.image = setup.GFX['smallarrow']
         self.rect = self.image.get_rect()
         self.state = 'selectmenu'
         self.state_dict = self.make_state_dict()
         self.slots = info_box.slots
+        self.inventory = inventory  #현재 가지고 있는 아이템에 따른 아이템창 제어를 위한 인벤토리값.
         self.pos_list = []
 
     def make_state_dict(self):
@@ -97,7 +98,7 @@ class SmallArrow(pg.sprite.Sprite):
         Make the list of arrow positions in the item submenu.
         항목 하위 메뉴에서 화살표 위치 목록을 만듭니다.
         """
-        pos_list = [(300, 173),
+        temp_list = [(300, 173),
                     (300, 223),
                     (300, 323),
                     (300, 373),
@@ -105,6 +106,12 @@ class SmallArrow(pg.sprite.Sprite):
                     (300, 528),
                     (535, 478),
                     (535, 528)]
+        
+        pos_list = []
+    
+        for i in self.inventory.index:
+            pos_list.append[temp_list[i]]       #가지고 있는 아이템의 인덱스값에 따라 pos_list에 append.
+        
 
         return pos_list
 
@@ -481,7 +488,7 @@ class MenuGui(object):
         self.info_box = InfoBox(inventory, stats)
         self.gold_box = QuickStats(self.game_data)
         self.selection_box = SelectionBox()
-        self.arrow = SmallArrow(self.info_box)
+        self.arrow = SmallArrow(self.info_box,self.inventory)
         self.arrow_index = 0
         self.allow_input = False
 
