@@ -1,5 +1,10 @@
-The Stolen Crown: A mini-RPG
+The Stolen Crown: A mini-RPG(명지대학교 공개SW실무 3조 수정)
 ====================
+
+1. 한글 번역
+2. 난이도 조정
+3. 이동속도 조정
+4. 게임 진행 속도 개선
 
 A fantasy mini-RPG built with Python and Pygame.
 
