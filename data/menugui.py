@@ -9,6 +9,10 @@ import pygame as pg
 from . import setup, observer
 from . import constants as c
 from . import tools
+import googletrans#구글 번역 API
+
+#구글 번역 변수 translator.translate(문장, dest='ko').text 함수를 사용해 한글 문자열로 번역 가능
+translator = googletrans.Translator()
 
 #Python 2/3 compatibility.
 #Python 2/3 호환성.
@@ -150,9 +154,9 @@ class QuickStats(pg.sprite.Sprite):
             if stat in magic_health_list:
                 current = self.stats[stat]['current']
                 max = self.stats[stat]['maximum']
-                text = "{}{}: {}/{}".format(first_letter, rest_of_letters, current, max)
+                text = translator = translator.translate("{}{}: {}/{}".format(first_letter, rest_of_letters, current, max), dest='ko').text
             elif stat == 'GOLD':
-                text = "Gold: {}".format(self.inventory[stat]['quantity'])
+                text = translator.translate("Gold: {}".format(self.inventory[stat]['quantity']), dest='ko').text
             render = self.small_font.render(text, True, c.NEAR_BLACK)
             x = 26
             y = 45 + (i*30)
@@ -197,11 +201,11 @@ class InfoBox(pg.sprite.Sprite):
         self.sword = self.get_tile(48, 0, setup.GFX['shopsigns'], 16, 16, 2)
         self.shield = self.get_tile(32, 0, setup.GFX['shopsigns'], 16, 16, 2)
         self.potion = self.get_tile(16, 0, setup.GFX['shopsigns'], 16, 16, 2)
-        self.possible_potions = ['Healing Potion', 'ELIXIR', 'Ether Potion']
-        self.possible_armor = ['Wooden Shield', 'Chain Mail']
-        self.possible_weapons = ['Long Sword', 'Rapier']
-        self.possible_magic = ['Fire Blast', 'Cure']
-        self.quantity_items = ['Healing Potion', 'ELIXIR', 'Ether Potion']
+        self.possible_potions = [translator.translate('Healing Potion', dest='ko').text, translator.translate('ELIXIR', dest='ko').text, translator.translate('Ether Potion', dest='ko').text]
+        self.possible_armor = [translator.translate('Wooden Shield', dest='ko').text, translator.translate('Chain Mail', dest='ko').text]
+        self.possible_weapons = [translator.translate('Long Sword', dest='ko').text, translator.translate('Rapier', dest='ko').text]
+        self.possible_magic = [translator.translate('Fire Blast', dest='ko').text, translator.translate('Cure', dest='ko').text]
+        self.quantity_items = [translator.translate('Healing Potion', dest='ko').text, translator.translate('ELIXIR', dest='ko').text, translator.translate('Ether Potion', dest='ko').text]
         self.slots = {}
         self.state = 'invisible'
         self.state_dict = self.make_state_dict()
@@ -245,30 +249,30 @@ class InfoBox(pg.sprite.Sprite):
         플레이어의 기본 통계 표시
         """
         title = 'STATS'
-        stat_list = ['Level', 'experience to next level',
-                     'health', 'magic', 'Attack Power', 
-                     'Defense Power', 'gold']
+        stat_list = [translator.translate('Level', dest='ko').text, translator.translate('experience to next level', dest='ko').text,
+                     translator.translate('health', dest='ko').text, translator.translate('magic', dest='ko').text, translator.translate('Attack Power', dest='ko').text, 
+                     translator.translate('Defense Power', dest='ko').text, translator.translate('gold', dest='ko').text]
         attack_power = 5
         surface, rect = self.make_blank_info_box(title)
 
         for i, stat in enumerate(stat_list):
-            if stat == 'health' or stat == 'magic':
-                text = "{}{}: {} / {}".format(stat[0].upper(),
+            if stat == translator.translate('health', dest='ko').text or stat == translator.translate('magic', dest='ko').text:
+                text = translator.translate("{}{}: {} / {}".format(stat[0].upper(),
                                               stat[1:],
                                               str(self.player_stats[stat]['current']),
-                                              str(self.player_stats[stat]['maximum']))
-            elif stat == 'experience to next level':
-                text = "{}{}: {}".format(stat[0].upper(),
+                                              str(self.player_stats[stat]['maximum'])), dest='ko').text
+            elif stat == translator.translate('experience to next level', dest='ko').text:
+                text = translator.translate("{}{}: {}".format(stat[0].upper(),
                                          stat[1:],
-                                         self.player_stats[stat])
-            elif stat == 'Attack Power':
-                text = "{}: {}".format(stat, self.get_attack_power())
-            elif stat == 'Defense Power':
-                text = "{}: {}".format(stat, self.get_defense_power())
-            elif stat == 'gold':
-                text = "Gold: {}".format(self.inventory['GOLD']['quantity'])
+                                         self.player_stats[stat]), dest='ko').text
+            elif stat == translator.translate('Attack Power', dest='ko').text:
+                text = translator.translate("{}: {}".format(stat, self.get_attack_power()), dest='ko').text
+            elif stat == translator.translate('Defense Power', dest='ko').text:
+                text = translator.translate("{}: {}".format(stat, self.get_defense_power()), dest='ko').text
+            elif stat == translator.translate('gold', dest='ko').text:
+                text = translator.translate("Gold: {}".format(self.inventory['GOLD']['quantity']), dest='ko').text
             else:
-                text = "{}: {}".format(stat, str(self.player_stats[stat]))
+                text = translator.translate("{}: {}".format(stat, str(self.player_stats[stat])), dest='ko').text
             text_image = self.font.render(text, True, c.NEAR_BLACK)
             text_rect = text_image.get_rect(x=50, y=80+(i*50))
             surface.blit(text_image, text_rect)
@@ -443,7 +447,7 @@ class SelectionBox(pg.sprite.Sprite):
 
     # 이미지 만들기 메소드
     def make_image(self):
-        choices = ['Items', 'Magic', 'Stats']   #선택할 수 있는 항목 item, magic, stats
+        choices = [translator.translate('Items', dest='ko').text, translator.translate('Magic', dest='ko').text, translator.translate('Stats', dest='ko').text]   #선택할 수 있는 항목 item, magic, stats
         image = setup.GFX['goldbox']            #goldbox 이미지 가져오기
         rect = image.get_rect(left=10, top=425)
 
@@ -567,29 +571,29 @@ class MenuGui(object):
         posy = self.arrow.rect.y - 38
 
         if (posx, posy) in self.info_box.slots:
-            if self.info_box.slots[(posx, posy)][:7] == 'Healing':
-                potion = 'Healing Potion'
+            if self.info_box.slots[(posx, posy)][:7] == translator.translate('Healing', dest='ko').text:
+                potion = translator.translate('Healing Potion', dest='ko').text
                 value = 30
                 self.drink_potion(potion, health, value)
-            elif self.info_box.slots[(posx, posy)][:5] == 'Ether':
-                potion = 'Ether Potion'
+            elif self.info_box.slots[(posx, posy)][:5] == translator.translate('Ether', dest='ko').text:
+                potion = translator.translate('Ether Potion', dest='ko').text
                 stat = self.game_data['player stats']['magic']
                 value = 30
                 self.drink_potion(potion, stat, value)
-            elif self.info_box.slots[(posx, posy)][:10] == 'Long Sword':
-                self.inventory['equipped weapon'] = 'Long Sword'
-            elif self.info_box.slots[(posx, posy)][:6] == 'Rapier':
-                self.inventory['equipped weapon'] = 'Rapier'
-            elif self.info_box.slots[(posx, posy)][:13] == 'Wooden Shield':
-                if 'Wooden Shield' in self.inventory['equipped armor']:
-                    self.inventory['equipped armor'].remove('Wooden Shield')
+            elif self.info_box.slots[(posx, posy)][:10] == translator.translate('Long Sword', dest='ko').text:
+                self.inventory['equipped weapon'] = translator.translate('Long Sword', dest='ko').text
+            elif self.info_box.slots[(posx, posy)][:6] == translator.translate('Rapier', dest='ko').text:
+                self.inventory['equipped weapon'] = translator.translate('Rapier', dest='ko').text
+            elif self.info_box.slots[(posx, posy)][:13] == translator.translate('Wooden Shield', dest='ko').text:
+                if translator.translate('Wooden Shield', dest='ko').text in self.inventory['equipped armor']:
+                    self.inventory['equipped armor'].remove(translator.translate('Wooden Shield', dest='ko').text)
                 else:
-                    self.inventory['equipped armor'].append('Wooden Shield')
-            elif self.info_box.slots[(posx, posy)][:10] == 'Chain Mail':
+                    self.inventory['equipped armor'].append(translator.translate('Wooden Shield', dest='ko').text)
+            elif self.info_box.slots[(posx, posy)][:10] == translator.translate('Chain Mail', dest='ko').text:
                 if 'Chain Mail' in self.inventory['equipped armor']:
-                    self.inventory['equipped armor'].remove('Chain Mail')
+                    self.inventory['equipped armor'].remove(translator.translate('Chain Mail', dest='ko').text)
                 else:
-                    self.inventory['equipped armor'].append('Chain Mail')
+                    self.inventory['equipped armor'].append(translator.translate('Chain Mail', dest='ko').text)
 
     def select_magic(self):
         """
@@ -602,7 +606,7 @@ class MenuGui(object):
         posy = self.arrow.rect.y - 39
 
         if (posx, posy) in self.info_box.slots:
-            if self.info_box.slots[(posx, posy)][:4] == 'Cure': # cure(치료) 마법 선택시
+            if self.info_box.slots[(posx, posy)][:4] == translator.translate('Cure', dest='ko').text: # cure(치료) 마법 선택시
                self.use_cure_spell()
 
     def use_cure_spell(self):
