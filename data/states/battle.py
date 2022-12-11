@@ -716,7 +716,7 @@ class Battle(tools._State): #적과의 전투 돌입 시에 상태를 다룰 수
             self.enemy_index = 0
         enemy = self.enemy_list[self.enemy_index]
         player_damage = enemy.calculate_hit(self.inventory['equipped armor'],
-                                            self.inventory)
+                                            self.inventory,enemy.name)#몬스터의 종류를 알려주기 위해 이름 추가
         self.damage_points.add(
             attackitems.HealthPoints(player_damage,
                                      self.player.rect.topright))
