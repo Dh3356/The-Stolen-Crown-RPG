@@ -428,15 +428,24 @@ class Person(pg.sprite.Sprite):
             observer.on_notify(event)
 
     #피격의 데미지를 attack stats를 참조하여 계산하는 메소드.(최소 0 ~ 최대 (대상의 레벨*5 - 방어구 수치))
-    def calculate_hit(self, armor_list, inventory):
+    def calculate_hit(self, armor_list, inventory,name):#적군의 이름을 받아와 필드 몬스터와 보스의 데미지를 다르게 하기 위해 이름 인자를 추가로 받아옴.
+        #이전에는 보스와 몬스터를 구분 없이 데미지 공식이 같았기에 두 종류 간의 차이를 주고자 새 인자를 추가함.
         """
         Calculate hit strength based on attack stats.
         """
+        
         armor_power = 0
         for armor in armor_list:
             armor_power += inventory[armor]['power']
-        max_strength = max(1, (self.level * 5) - armor_power)
-        min_strength = 0
+
+        if name == "devil":#평시 몬스터의 데미지
+            max_strength = max(1, (self.level * 5) - armor_power)
+            min_strength = 0
+        
+        elif name == "evilwizard":#보스의 데미지.
+            max_strength = max(1, 20)
+            min_strength = 0
+        
         return random.randint(min_strength, max_strength)
 
     #전투에서 run 선택 시 전투에서 벗어나는 상태로 전환해주는 메소드

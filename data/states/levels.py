@@ -21,6 +21,7 @@ if sys.version_info[0] == 2:
 
 
 class LevelState(tools._State):
+    #해당 객체에 대한 인스턴스를 생성한다.
     def __init__(self, name, battles=False):
         super(LevelState, self).__init__()
         self.name = name
@@ -35,6 +36,7 @@ class LevelState(tools._State):
     def startup(self, current_time, game_data):
         """
         Call when the State object is flipped to.
+        상태 객체가 화면 전환일시 호출한다.
         """
         self.game_data = game_data
         self.music, self.volume = self.set_music()
@@ -70,6 +72,7 @@ class LevelState(tools._State):
     def set_music(self):
         """
         Set music based on name.
+        이름을 이용해 음악을 선택한다.
         """
         music_dict = {c.TOWN: ('town_theme', .4),
                       c.OVERWORLD: ('overworld', .4),
@@ -96,6 +99,7 @@ class LevelState(tools._State):
     def make_viewport(self, map_image):
         """
         Create the viewport to view the level through.
+        게임 화면을 그릴 창을 만든다.
         """
         map_rect = map_image.get_rect()
         return setup.SCREEN.get_rect(bottom=map_rect.bottom)
@@ -103,6 +107,7 @@ class LevelState(tools._State):
     def make_level_surface(self, map_image):
         """
         Create the surface all images are blitted to.
+        지표면을 만들기 위한 이미지를 모두 만든다.
         """
         map_rect = map_image.get_rect()
         map_width = map_rect.width
@@ -117,6 +122,7 @@ class LevelState(tools._State):
     def make_player(self):
         """
         Make the player and sets location.
+        플레이어를 만들고 위치를 설정한다.
         """
         last_state = self.previous
 
@@ -142,6 +148,7 @@ class LevelState(tools._State):
     def make_blockers(self):
         """
         Make the blockers for the level.
+        차단벽을 만든다.
         """
         blockers = []
 
@@ -158,6 +165,7 @@ class LevelState(tools._State):
     def make_sprites(self):
         """
         Make any sprites for the level as needed.
+        각 지역에 필요한 스프라이트들을 만든다
         """
         sprites = pg.sprite.Group()
 
@@ -244,6 +252,7 @@ class LevelState(tools._State):
     def assign_dialogue(self, sprite, property_dict):
         """
         Assign dialogue from object property dictionaries in tmx maps to sprites.
+        스프라이트(npc)와의 대화 내용을 설정한다.
         """
         dialogue_list = []
         for i in range(int(property_dict['dialogue length'])):
@@ -298,6 +307,7 @@ class LevelState(tools._State):
 
 
     def check_for_opened_chest(self, sprite):
+        #상자가 이미 연 상자인지 검사한다.
         if sprite.name == 'treasurechest':
             if not self.game_data['treasure{}'.format(sprite.id)]:
                 sprite.dialogue = ['Empty.']
@@ -307,6 +317,7 @@ class LevelState(tools._State):
     def make_state_dict(self):
         """
         Make a dictionary of states the level can be in.
+        상태 딕셔너리를 만든다.
         """
         state_dict = {'normal': self.running_normally,
                       'dialogue': self.handling_dialogue,
@@ -320,6 +331,7 @@ class LevelState(tools._State):
     def make_level_portals(self):
         """
         Make the portals to switch state.
+        다른 지역으로 이동하는 포탈을 만든다.
         """
         portal_group = pg.sprite.Group()
 
@@ -337,6 +349,7 @@ class LevelState(tools._State):
     def running_normally(self, surface, keys, current_time):
         """
         Update level normally.
+        움직일 때 지역을 움직이게 한다.
         """
         self.check_for_dialogue()
         self.player.update(keys, current_time)
@@ -353,6 +366,7 @@ class LevelState(tools._State):
     def check_for_portals(self):
         """
         Check if the player walks into a door, requiring a level change.
+        플레이어가 다른 지역으로 이동하는지 검사하고, 필요 시 지역을 바꾼다.
         """
         if self.use_portal and not self.done:
             self.player.location = self.player.get_tile_location()
@@ -364,6 +378,7 @@ class LevelState(tools._State):
         """
         Check if the flag has been made true, indicating
         to switch state to a battle.
+        전투가 일어나는 것을 검사하고 전투 상태로 전환한다.
         """
         if self.switch_to_battle and self.allow_battles and not self.done:
             self.player.location = self.player.get_tile_location()
@@ -374,6 +389,7 @@ class LevelState(tools._State):
     def check_for_menu(self, keys):
         """
         Check if player hits enter to go to menu.
+        플레이어가 메뉴로 들어갔는지 검사한다.
         """
         if keys[pg.K_RETURN] and self.allow_input:
             if self.player.state == 'resting':
@@ -387,6 +403,7 @@ class LevelState(tools._State):
     def update_game_data(self):
         """
         Update the persistant game data dictionary.
+        지속적인 게임 데이터 딕셔너리를 검사한다.
         """
         self.game_data['last location'] = self.player.location
         self.game_data['last direction'] = self.player.direction
@@ -396,6 +413,7 @@ class LevelState(tools._State):
     def check_for_end_of_game(self):
         """
         Switch scene to credits if main quest is complete.
+        게임의 메인 퀘스트를 클리어 할 시 엔딩 크레딧으로 전환한다.
         """
         if self.game_data['delivered crown']:
             self.next = c.CREDITS
@@ -404,6 +422,7 @@ class LevelState(tools._State):
     def set_new_start_pos(self):
         """
         Set new start position based on previous state.
+        이전 스테이지에 기반하여 새로운 시작지점을 설정한다.
         """
         location = copy.deepcopy(self.game_data['last location'])
         direction = self.game_data['last direction']
@@ -422,6 +441,7 @@ class LevelState(tools._State):
     def handling_dialogue(self, surface, keys, current_time):
         """
         Update only dialogue boxes.
+        대화 상자를 업데이트한다.
         """
         self.dialogue_handler.update(keys, current_time)
         self.draw_level(surface)
@@ -429,6 +449,7 @@ class LevelState(tools._State):
     def goto_menu(self, surface, keys, *args):
         """
         Go to menu screen.
+        메뉴로 이동한다.
         """
         self.menu_screen.update(surface, keys)
         self.menu_screen.draw(surface)
@@ -436,6 +457,7 @@ class LevelState(tools._State):
     def check_for_dialogue(self):
         """
         Check if the level needs to freeze.
+        대화 중 멈출 필요가 있을 시 멈추게 한다.
         """
         if self.dialogue_handler.textbox:
             self.state = 'dialogue'
@@ -443,6 +465,7 @@ class LevelState(tools._State):
     def transition_out(self, surface, *args):
         """
         Transition level to new scene.
+         페이드 아웃 효과
         """
         transition_image = pg.Surface(self.transition_rect.size)
         transition_image.fill(c.TRANSITION_COLOR)
@@ -457,6 +480,7 @@ class LevelState(tools._State):
     def slow_fade_out(self, surface, *args):
         """
         Transition level to new scene.
+        느린 페이드 효과
         """
         transition_image = pg.Surface(self.transition_rect.size)
         transition_image.fill(c.TRANSITION_COLOR)
@@ -471,6 +495,7 @@ class LevelState(tools._State):
     def transition_in(self, surface, *args):
         """
         Transition into level.
+        페이드 인 효과
         """
         self.viewport_update()
         transition_image = pg.Surface(self.transition_rect.size)
@@ -486,6 +511,7 @@ class LevelState(tools._State):
     def update(self, surface, keys, current_time):
         """
         Update state.
+        스테이지를 업데이트한다.
         """
         state_function = self.state_dict[self.state]
         state_function(surface, keys, current_time)
@@ -494,6 +520,7 @@ class LevelState(tools._State):
         """
         Update viewport so it stays centered on character,
         unless at edge of map.
+        화면을 업데이트한다.
         """
         self.viewport.center = self.player.rect.center
         self.viewport.clamp_ip(self.level_rect)
@@ -501,6 +528,7 @@ class LevelState(tools._State):
     def draw_level(self, surface):
         """
         Blit all images to screen.
+        지역을 그린다.
         """
         self.level_surface.blit(self.map_image, self.viewport, self.viewport)
         self.level_surface.blit(self.player.image, self.player.rect)
