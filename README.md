@@ -1,4 +1,5 @@
-The Stolen Crown: A mini-RPG(명지대학교 공개SW실무 3조 수정)
+The Stolen Crown: A mini-RPG
+(명지대학교 공개SW실무 3조 수정)
 ====================
 
 1. 한글 번역
