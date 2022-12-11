@@ -260,13 +260,15 @@ class WeaponShop(Shop):
                 'price': 150,
                 'quantity': 1,
                 'power': 11,
-                'dialogue': longsword_dialogue}
+                'dialogue': longsword_dialogue,
+                'index':1}
 
         item1 = {'type': 'Rapier',
                  'price': 50,
                  'quantity': 1,
                  'power': 9,
-                 'dialogue': rapier_dialogue}
+                 'dialogue': rapier_dialogue,
+                 'index':0}
 
         return [item1, item2]
 
@@ -299,13 +301,15 @@ class ArmorShop(Shop):
                 'price': 50,
                 'quantity': 1,
                 'power': 2,
-                'dialogue': chainmail_dialogue}
+                'dialogue': chainmail_dialogue,
+                'index':2}
 
         item2 = {'type': 'Wooden Shield',
                  'price': 75,
                  'quantity': 1,
                  'power': 3,
-                 'dialogue': shield_dialogue}
+                 'dialogue': shield_dialogue,
+                 'index':3}
 
         return [item, item2]
 
@@ -376,13 +380,15 @@ class PotionShop(Shop):
                 'price': 15,
                 'quantity': 1,
                 'power': None,
-                'dialogue': healing_dialogue}
+                'dialogue': healing_dialogue,
+                'index': 5}
 
         item2 = {'type': 'Ether Potion',
                  'price': 15,
                  'quantity': 1,
                  'power': None,
-                 'dialogue': ether_dialogue}
+                 'dialogue': ether_dialogue,
+                 'index': 4}
 
         return [item, item2]
 
