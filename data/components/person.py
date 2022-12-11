@@ -552,14 +552,14 @@ class Player(Person):
         return self.game_data['player stats']['Level']
 
 
-    #플레이어의 이동에 필요한 벡터값을 구현하는 메소드(플레이어는 2칸 씩 이동)
+    #플레이어의 이동에 필요한 벡터값을 구현하는 메소드(플레이어는 4칸 씩 이동)
     def create_vector_dict(self):
         """Return a dictionary of x and y velocities set to
         direction keys."""
-        vector_dict = {'up': (0, -2),
-                       'down': (0, 2),
-                       'left': (-2, 0),
-                       'right': (2, 0)}
+        vector_dict = {'up': (0, -4),
+                       'down': (0, 4),
+                       'left': (-4, 0),
+                       'right': (4, 0)}
 
         return vector_dict
 
