@@ -92,10 +92,10 @@ class Battle(tools._State): #적과의 전투 돌입 시에 상태를 다룰 수
         """
         new_dict = {c.OVERWORLD: 1,
                     c.DUNGEON: 2,
-                    c.DUNGEON2: 3,#지하 1층. 
+                    c.DUNGEON2: 3,#지하 1층 
                     c.DUNGEON3: 4,#지하 2층
-                    c.DUNGEON4: 3,#지하 3층
-                    c.DUNGEON5: 6}#보스방
+                    c.DUNGEON4: 3,#지하 1층
+                    c.DUNGEON5: 6}#지하 2층 보스방
 
         return new_dict
 
@@ -618,7 +618,9 @@ class Battle(tools._State): #적과의 전투 돌입 시에 상태를 다룰 수
         self.run_away = True
         self.arrow.state = 'invisible'
         self.enemy_index = 0 
-        self.enter_enemy_attack_state()
+        #도망갈때 50%의 확률로 적에게 피격당한다.
+        if random.randint(0,1) == 1:
+            self.enter_enemy_attack_state()
 
     def enter_enemy_attack_state(self):
         """
