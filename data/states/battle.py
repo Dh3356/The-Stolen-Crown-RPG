@@ -87,13 +87,15 @@ class Battle(tools._State): #적과의 전투 돌입 시에 상태를 다룰 수
     def make_enemy_level_dict(self):
         """
         적군의 능력치를 딕셔너리 형식으로 리턴시킨다.
+        각 지역에 따라 출현하는 몬스터의 레벨을 설정할 수 있다.
+        게임 난이도의 상향을 위해 던전에 나오는 몬스터의 레벨을 상향 조정하였다.
         """
         new_dict = {c.OVERWORLD: 1,
                     c.DUNGEON: 2,
-                    c.DUNGEON2: 2,
-                    c.DUNGEON3: 2,
-                    c.DUNGEON4: 2,
-                    c.DUNGEON5: 4}
+                    c.DUNGEON2: 3,#지하 1층. 
+                    c.DUNGEON3: 4,#지하 2층
+                    c.DUNGEON4: 3,#지하 3층
+                    c.DUNGEON5: 6}#보스방
 
         return new_dict
 
@@ -615,7 +617,7 @@ class Battle(tools._State): #적과의 전투 돌입 시에 상태를 다룰 수
         """
         self.run_away = True
         self.arrow.state = 'invisible'
-        self.enemy_index = 0
+        self.enemy_index = 0 
         self.enter_enemy_attack_state()
 
     def enter_enemy_attack_state(self):
