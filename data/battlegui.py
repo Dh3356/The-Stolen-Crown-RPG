@@ -6,6 +6,10 @@ import sys
 import pygame as pg
 from . import setup, observer
 from . import constants as c
+import googletrans#구글 번역 API
+
+#구글 번역 변수 translator.translate(문장, dest='ko').text 함수를 사용해 한글 문자열로 번역 가능
+translator = googletrans.Translator()
 
 #Python 2/3 compatibility.
 if sys.version_info[0] == 2:
@@ -37,23 +41,23 @@ class InfoBox(object):
         Make dictionary of states Battle info can be in.
         전투 정보가 들어갈 수 있는 상태 사전을 만듭니다.
         """
-        state_dict   = {c.SELECT_ACTION: 'Select an action.',
-                        c.SELECT_MAGIC: 'Select a magic spell.',
-                        c.SELECT_ITEM: 'Select an item.',
-                        c.SELECT_ENEMY: 'Select an enemy.',
-                        c.ENEMY_ATTACK: 'Enemy attacks player!',
-                        c.PLAYER_ATTACK: 'Player attacks enemy! ',
-                        c.RUN_AWAY: 'RUN AWAY!!!',
+        state_dict   = {c.SELECT_ACTION: translator.translate('Select an action.', dest='ko').text,
+                        c.SELECT_MAGIC: translator.translate('Select a magic spell.', dest='ko').text,
+                        c.SELECT_ITEM: translator.translate('Select an item.', dest='ko').text,
+                        c.SELECT_ENEMY: translator.translate('Select an enemy.', dest='ko').text,
+                        c.ENEMY_ATTACK: translator.translate('Enemy attacks player!', dest='ko').text,
+                        c.PLAYER_ATTACK: translator.translate('Player attacks enemy! ', dest='ko').text,
+                        c.RUN_AWAY: translator.translate('RUN AWAY!!!', dest='ko').text,
                         c.ENEMY_DAMAGED: self.enemy_damaged(),
-                        c.ENEMY_DEAD: 'Enemy killed.',
+                        c.ENEMY_DEAD: translator.translate('Enemy killed.', dest='ko').text,
                         c.PLAYER_DAMAGED: self.player_hit(),
-                        c.DRINK_HEALING_POTION: 'Player healed.',
-                        c.DRINK_ETHER_POTION: 'Magic Points Increased.',
-                        c.FIRE_SPELL: 'FIRE BLAST!',
-                        c.BATTLE_WON: 'Battle won!',
+                        c.DRINK_HEALING_POTION: translator.translate('Player healed.', dest='ko').text,
+                        c.DRINK_ETHER_POTION: translator.translate('Magic Points Increased.', dest='ko').text,
+                        c.FIRE_SPELL: translator.translate('FIRE BLAST!', dest='ko').text,
+                        c.BATTLE_WON: translator.translate('Battle won!', dest='ko').text,
                         c.SHOW_EXPERIENCE: self.show_experience(),
                         c.LEVEL_UP: self.level_up(),
-                        c.TWO_ACTIONS: 'Two actions per turn mode is now available.',
+                        c.TWO_ACTIONS: translator.translate('Two actions per turn mode is now available.', dest='ko').text,
                         c.SHOW_GOLD: self.show_gold()}
 
         return state_dict
@@ -63,7 +67,7 @@ class InfoBox(object):
         Return text of enemy being hit using calculated damage.
         계산된 데미지를 사용하여 적에게 명중하는 텍스트를 반환
         """
-        return "Enemy hit with {} damage.".format(self.enemy_damage)
+        return translator.translate("Enemy hit with {} damage.".format(self.enemy_damage), dest='ko').text
 
     def make_item_text(self):
         """
@@ -71,16 +75,16 @@ class InfoBox(object):
         플레이어가 항목을 선택할 때 사용할 텍스트를 만듭니다
         """
         inventory = self.game_data['player inventory']  #사용자의 보관함 가져와 저장
-        allowed_item_list = ['Healing Potion', 'Ether Potion']  
-        title = 'SELECT ITEM'
+        allowed_item_list = [translator.translate('Healing Potion', dest='ko').text, translator.translate('Ether Potion', dest='ko').text]  
+        title = translator.translate('SELECT ITEM', dest='ko').text
         item_text_list = [title]
 
         for item in allowed_item_list:
             if item in inventory:
-                text = item + ": " + str(inventory[item]['quantity'])
+                text = translator.translate(item + ": " + str(inventory[item]['quantity']), dest='ko').text
                 item_text_list.append(text)
 
-        item_text_list.append('BACK')
+        item_text_list.append(translator.translate('BACK', dest='ko').text)
 
         return item_text_list
 
@@ -90,12 +94,12 @@ class InfoBox(object):
         플레이어가 마법을 선택할 때 사용할 텍스트를 만듭니다
         """
         inventory = self.game_data['player inventory']
-        allowed_item_list = ['Fire Blast', 'Cure']
-        title = 'SELECT MAGIC SPELL'
+        allowed_item_list = [translator.translate('Fire Blast', dest='ko').text, translator.translate('Cure', dest='ko').text]
+        title = translator.translate('SELECT MAGIC SPELL', dest='ko').text
         magic_text_list = [title]
         spell_list = [item for item in inventory if item in allowed_item_list]
         magic_text_list.extend(spell_list)
-        magic_text_list.append('BACK')
+        magic_text_list.append(translator.translate('BACK', dest='ko').text)
 
         return magic_text_list
 
@@ -170,9 +174,9 @@ class InfoBox(object):
     # 플레이어가 공격을 받았을 때
     def player_hit(self):
         if self.player_damage:  # 공격 성공시
-            return "Player hit with {} damage".format(self.player_damage)
+            return translator.translate("Player hit with {} damage".format(self.player_damage), dest='ko').text
         else:                   # 공격 실패시
-            return "Enemy missed!"
+            return translator.translate("Enemy missed!", dest='ko').text
 
     def update(self):
         """
@@ -186,21 +190,21 @@ class InfoBox(object):
         Show how much experience the player earned.
         플레이어가 배틀에서 얻은 경험치 반환
         """
-        return "You earned {} experience points this battle!".format(self.experience_points)
+        return translator.translate("You earned {} experience points this battle!".format(self.experience_points), dest='ko').text
 
     def show_gold(self):
         """
         Show how much gold the player earned.
         플레이어가 배틀에서 얻은 골드 반환
         """
-        return "You found {} gold.".format(self.gold_earned)
+        return translator.translate("You found {} gold.".format(self.gold_earned), dest='ko').text
 
     def level_up(self):
         """
         Return message indicating a level up for player.
         플레이어의 레벨없을 나타내는 메시지 반환
         """
-        return "You leveled up to Level {}!".format(self.game_data['player stats']['Level'])
+        return translator.translate("You leveled up to Level {}!".format(self.game_data['player stats']['Level']), dest='ko').text
 
     # 레벨 업 메시지 상태창에 저장
     def reset_level_up_message(self):
@@ -242,10 +246,10 @@ class SelectBox(object):
     def make_slots(self):
         """
         Make the slots that hold the text selections, and locations.
-        텍스트 선택 항목과 위치가 들어 있느 슬롯을 만듭니다.
+        텍스트 선택 항목과 위치가 들어 있는 슬롯을 만듭니다.
         """
         slot_dict = {}
-        selections = ['Attack', 'Items', 'Magic', 'Run']
+        selections = [translator.translate('Attack', dest='ko').text, translator.translate('Items', dest='ko').text, translator.translate('Magic', dest='ko').text, translator.translate('Run', dest='ko').text]
 
         for i, text in enumerate(selections): # 각 선택지들의 위치 설정
             slot_dict[text] = {'x': 150,
