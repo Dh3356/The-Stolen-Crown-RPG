@@ -5,6 +5,10 @@ import copy
 import pygame as pg
 from .. import tools, setup
 from .. import constants as c
+import googletrans#구글 번역 API
+
+#구글 번역 변수 translator.translate(문장, dest='ko').text 함수를 사용해 한글 문자열로 번역 가능
+translator = googletrans.Translator()
 
 #일반공격에 사용되는 검 이미지 애니메이션에 사용하는 클래스
 class Sword(object):
@@ -90,13 +94,13 @@ class HealthPoints(pg.sprite.Sprite):
         """
         if self.damage:
             if points > 0:
-                text = "-{}".format(str(points))
+                text = translator.translate("-{}".format(str(points)), dest='ko').text
                 surface = self.font.render(text, True, c.RED)
                 return surface
             else:
                 return self.font.render('Miss', True, c.WHITE).convert_alpha()
         else:
-            text = "+{}".format(str(points))
+            text = translator.translate("+{}".format(str(points)), dest='ko').text
             if self.ether:
                 surface = self.font.render(text, True, c.PINK)
             else:

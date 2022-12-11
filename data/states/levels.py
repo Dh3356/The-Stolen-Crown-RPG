@@ -13,6 +13,10 @@ from .. components import person, textbox, portal
 from . import player_menu
 from .. import tilerender
 from .. import setup
+import googletrans#구글 번역 API
+
+#구글 번역 변수 translator.translate(문장, dest='ko').text 함수를 사용해 한글 문자열로 번역 가능
+translator = googletrans.Translator()
 
 
 #Python 2/3 compatibility.
@@ -260,19 +264,19 @@ class LevelState(tools._State):
             sprite.dialogue = dialogue_list
 
         if sprite.name == 'oldman':
-            quest_in_process_dialogue = ['Hurry to the NorthEast Shores!',
-                                         'I do not have much time left.']
+            quest_in_process_dialogue = [translator.translate('Hurry to the NorthEast Shores!', dest='ko').text,
+                                         translator.translate('I do not have much time left.', dest='ko').text]
 
             if self.game_data['has brother elixir']:
                 if self.game_data['elixir received']:
-                    sprite.dialogue = ['My good health is thanks to you.',
-                                       'I will be forever in your debt.']
+                    sprite.dialogue = [translator.translate('My good health is thanks to you.', dest='ko').text,
+                                       translator.translate('I will be forever in your debt.', dest='ko').text]
                 else:
-                    sprite.dialogue = ['Thank you for reaching my brother.',
-                                       'This ELIXIR will cure my ailment.',
-                                       'As a reward, I will teach you a magic spell.',
-                                       'Use it wisely.',
-                                       'You learned FIRE BLAST.']
+                    sprite.dialogue = [translator.translate('Thank you for reaching my brother.', dest='ko').text,
+                                       translator.translate('This ELIXIR will cure my ailment.', dest='ko').text,
+                                       translator.translate('As a reward, I will teach you a magic spell.', dest='ko').text,
+                                       translator.translate('Use it wisely.', dest='ko').text,
+                                       translator.translate('You learned FIRE BLAST.', dest='ko').text]
 
             elif self.game_data['talked to sick brother']:
                 sprite.dialogue = quest_in_process_dialogue
@@ -282,22 +286,22 @@ class LevelState(tools._State):
         elif sprite.name == 'oldmanbrother':
             if self.game_data['has brother elixir']:
                 if self.game_data['elixir received']:
-                    sprite.dialogue = ['I am glad my brother is doing well.',
-                                       'You have a wise and generous spirit.']
+                    sprite.dialogue = [translator.translate('I am glad my brother is doing well.', dest='ko').text,
+                                       translator.translate('You have a wise and generous spirit.', dest='ko').text]
                 else:
-                    sprite.dialogue = ['Hurry! There is precious little time.']
-            elif self.game_data['talked to sick brother']:
-                sprite.dialogue = ['My brother is sick?!?',
-                                   'I have not seen him in years.  I had no idea he was not well.',
-                                   'Quick, take this ELIXIR to him immediately.']
+                    sprite.dialogue = [translator.translate('Hurry! There is precious little time.', dest='ko').text]
+            elif self.game_data[translator.translate('talked to sick brother', dest='ko').text]:
+                sprite.dialogue = [translator.translate('My brother is sick?!?', dest='ko').text,
+                                   translator.translate('I have not seen him in years.  I had no idea he was not well.', dest='ko').text,
+                                   translator.translate('Quick, take this ELIXIR to him immediately.', dest='ko').text]
         elif sprite.name == 'king':
-            retrieved_crown_dialogue = ['My crown! You recovered my stolen crown!!!',
-                                        'I can not believe what I see before my eyes.',
-                                        'You are truly a brave and noble warrior.',
-                                        'Henceforth, I name thee Grand Protector of this Town!',
-                                        'You are the greatest warrior this world has ever known.']
-            thank_you_dialogue = ['Thank you for retrieving my crown.',
-                                  'My kingdom is forever in your debt.']
+            retrieved_crown_dialogue = [translator.translate('My crown! You recovered my stolen crown!!!', dest='ko').text,
+                                        translator.translate('I can not believe what I see before my eyes.', dest='ko').text,
+                                        translator.translate('You are truly a brave and noble warrior.', dest='ko').text,
+                                        translator.translate('Henceforth, I name thee Grand Protector of this Town!', dest='ko').text,
+                                        translator.translate('You are the greatest warrior this world has ever known.', dest='ko').text]
+            thank_you_dialogue = [translator.translate('Thank you for retrieving my crown.', dest='ko').text,
+                                  translator.translate('My kingdom is forever in your debt.', dest='ko').text]
 
             if self.game_data['crown quest'] and not self.game_data['delivered crown']:
                 sprite.dialogue = retrieved_crown_dialogue
@@ -310,7 +314,7 @@ class LevelState(tools._State):
         #상자가 이미 연 상자인지 검사한다.
         if sprite.name == 'treasurechest':
             if not self.game_data['treasure{}'.format(sprite.id)]:
-                sprite.dialogue = ['Empty.']
+                sprite.dialogue = [translator.translate('Empty.', dest='ko').text]
                 sprite.item = None
                 sprite.index = 1
 

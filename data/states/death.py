@@ -4,6 +4,10 @@ from .. import setup, tools
 from .. import observer
 from ..components import person
 from .. import constants as c
+import googletrans#구글 번역 API
+
+#구글 번역 변수 translator.translate(문장, dest='ko').text 함수를 사용해 한글 문자열로 번역 가능
+translator = googletrans.Translator()
 
 #Python 2/3 compatibility.
 if sys.version_info[0] == 2:
@@ -108,16 +112,16 @@ class DeathScene(tools._State):
         """
         box_image = setup.GFX['dialoguebox']
         box_rect = box_image.get_rect()
-        text = 'You have died. Restart from last save point?'
+        text = translator.translate('You have died. Restart from last save point?', dest='ko').text
         text_render = self.font.render(text, True, c.NEAR_BLACK) 
         text_rect = text_render.get_rect(centerx=box_rect.centerx,
                                          y=30)
-        text2 = 'Yes'
+        text2 = translator.translate('Yes', dest='ko').text
         text2_render = self.font.render(text2, True, c.NEAR_BLACK)
         text2_rect = text2_render.get_rect(centerx=box_rect.centerx,
                                            y=70)
 
-        text3 = 'No'
+        text3 = translator.translate('No', dest='ko').text
         text3_render = self.font.render(text3, True, c.NEAR_BLACK)
         text3_rect = text3_render.get_rect(centerx=box_rect.centerx,
                                            y=105)

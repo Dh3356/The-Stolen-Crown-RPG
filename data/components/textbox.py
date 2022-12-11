@@ -3,6 +3,10 @@ import copy
 import pygame as pg
 from .. import setup, observer, tools
 from .. import constants as c
+import googletrans#구글 번역 API
+
+#구글 번역 변수 translator.translate(문장, dest='ko').text 함수를 사용해 한글 문자열로 번역 가능
+translator = googletrans.Translator()
 
 #다음 페이지가 있다는 것을 알려주는 깜빡거리는 화살표를 구현하는 클래스
 class NextArrow(pg.sprite.Sprite):
@@ -138,21 +142,21 @@ class TextHandler(object):
                     self.talking_sprite.item = 'ELIXIR'
                     self.game_data['has brother elixir'] = True
                     self.check_for_item()
-                    dialogue = ['Hurry! There is precious little time.']
+                    dialogue = [translator.translate('Hurry! There is precious little time.', dest='ko').text]
                     self.talking_sprite.dialogue = dialogue
                 elif self.talking_sprite.name == 'oldman':
                     if self.game_data['has brother elixir'] and \
                             not self.game_data['elixir received']:
                         del self.game_data['player inventory']['ELIXIR']
                         self.game_data['elixir received'] = True
-                        dialogue = ['My good health is thanks to you.',
-                                    'I will be forever in your debt.']
+                        dialogue = [translator.translate('My good health is thanks to you.', dest='ko').text,
+                                    translator.translate('I will be forever in your debt.', dest='ko').text]
                         self.talking_sprite.dialogue = dialogue
                     elif not self.game_data['talked to sick brother']:
                         self.game_data['talked to sick brother'] = True
                          
-                        dialogue = ['Hurry to the NorthEast Shores!',
-                                    'I do not have much time left.']
+                        dialogue = [translator.translate('Hurry to the NorthEast Shores!', dest='ko').text,
+                                    translator.translate('I do not have much time left.', dest='ko').text]
                         self.talking_sprite.dialogue = dialogue
                     else:
                         self.end_dialogue(current_time)
@@ -160,9 +164,9 @@ class TextHandler(object):
                      
                     if not self.game_data['talked to king']:
                         self.game_data['talked to king'] = True
-                        new_dialogue = ['Hurry to the castle in the NorthWest!',
-                                        'The sorceror who lives there has my crown.',
-                                        'Please retrieve it for me.']
+                        new_dialogue = [translator.translate('Hurry to the castle in the NorthWest!', dest='ko').text,
+                                        translator.translate('The sorceror who lives there has my crown.', dest='ko').text,
+                                        translator.translate('Please retrieve it for me.', dest='ko').text]
                         self.talking_sprite.dialogue = new_dialogue
                         self.end_dialogue(current_time)
                     elif self.game_data['crown quest']:
@@ -235,12 +239,12 @@ class TextHandler(object):
             self.talking_sprite.item = None
 
             if self.talking_sprite.name == 'treasurechest':
-                self.talking_sprite.dialogue = ['Empty.']
+                self.talking_sprite.dialogue = [translator.translate('Empty.', dest='ko').text]
 
             if item == 'ELIXIR':
                 self.game_data['has brother elixir'] = True
                 self.game_data['old man gift'] = 'Fire Blast'
-                dialogue = ['Hurry! There is precious little time.']
+                dialogue = [translator.translate('Hurry! There is precious little time.', dest='ko').text]
                 self.level.reset_dialogue = self.talking_sprite, dialogue
 
     #인벤토리에 새로운 아이템을 추가하는 메소드(healing potion, ether potion, elxir, fire blast)
