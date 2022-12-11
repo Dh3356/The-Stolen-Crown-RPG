@@ -12,6 +12,10 @@ import pygame as pg
 from . import setup, observer
 from . components import textbox
 from . import constants as c
+import googletrans#구글 번역 API
+
+#구글 번역 변수 translator.translate(문장, dest='ko').text 함수를 사용해 한글 문자열로 번역 가능
+translator = googletrans.Translator()
 
 
 #Python 2/3 compatibility.
@@ -35,8 +39,8 @@ class Gui(object):
         self.name = level.name
         self.state = 'dialogue'
         self.no_selling = ['Inn', 'magic shop']
-        self.weapon_list = ['Long Sword', 'Rapier']
-        self.armor_list = ['Chain Mail', 'Wooden Shield']
+        self.weapon_list = [translator.translate('Long Sword', dest='ko').text, translator.translate('Rapier', dest='ko').text]
+        self.armor_list = [translator.translate('Chain Mail', dest='ko').text, translator.translate('Wooden Shield', dest='ko').text]
         self.font = pg.font.Font(setup.FONTS[c.MAIN_FONT], 22)
         self.index = 0
         self.timer = 0.0
@@ -63,7 +67,7 @@ class Gui(object):
         if self.name in self.no_selling:
             choices = self.items[0]['dialogue']
         else:
-            choices = ['Buy', 'Sell', 'Leave']
+            choices = [translator.translate('Buy', dest='ko').text, translator.translate('Sell', dest='ko').text, translator.translate('Leave', dest='ko').text]
         self.selection_box = self.make_selection_box(choices)
         self.state_dict = self.make_state_dict()
 
@@ -115,7 +119,7 @@ class Gui(object):
         surface.set_colorkey(c.BLACK)
         surface.blit(image, (0, 0))
         gold = self.player_inventory['GOLD']['quantity']
-        text = 'Gold: ' + str(gold)
+        text = translator.translate('Gold: ' + str(gold), dest='ko').text
         text_render = self.font.render(text, True, c.NEAR_BLACK)
         text_rect = text_render.get_rect(x=80, y=60)
 
@@ -218,9 +222,9 @@ class Gui(object):
         for item in self.items:
             choices.append(item['dialogue'])
         if self.name in self.no_selling:
-            choices.append('Leave')
+            choices.append(translator.translate('Leave', dest='ko').text)
         else:
-            choices.append('Cancel')
+            choices.append(translator.translate('Cancel', dest='ko').text)
         self.dialogue_box = self.make_dialogue_box(self.dialogue, self.index)
         self.selection_box = self.make_selection_box(choices)
         self.gold_box = self.make_gold_box()
@@ -273,8 +277,8 @@ class Gui(object):
     # confirm_purchase(self, keys, current_time) 메소드 : 상점에서 Buy를 선택 시 진행하는 요소를 구현한 메소드
     def confirm_purchase(self, keys, current_time):
         """Confirm selection state for GUI"""
-        dialogue = ['Are you sure?']
-        choices = ['Yes', 'No']
+        dialogue = [translator.translate('Are you sure?', dest='ko').text]
+        choices = [translator.translate('Yes', dest='ko').text, translator.translate('No', dest='ko').text]
         self.selection_box = self.make_selection_box(choices)
         self.gold_box = self.make_gold_box()
         self.dialogue_box = self.make_dialogue_box(dialogue, 0)
@@ -331,9 +335,9 @@ class Gui(object):
         quantity = item['quantity']
         value = item['price']
         power = item['power']
-        magic_list = ['Cure', 'Fire Blast']
-        player_armor = ['Chain Mail', 'Wooden Shield']
-        player_weapons = ['Rapier', 'Long Sword']
+        magic_list = [translator.translate('Cure', dest='ko').text, translator.translate('Fire Blast', dest='ko').text]
+        player_armor = [translator.translate('Chain Mail', dest='ko').text, translator.translate('Wooden Shield', dest='ko').text]
+        player_weapons = [translator.translate('Rapier', dest='ko').text, translator.translate('Long Sword', dest='ko').text]
         player_items = self.level.game_data['player inventory']
         player_health = self.level.game_data['player stats']['health']
         player_magic = self.level.game_data['player stats']['magic']
@@ -433,7 +437,7 @@ class Gui(object):
     # reject_insufficient_gold(self, keys, current_time) 메소드 : 상점에서 골드 부족 시 경고 창을 구현하는 메소드
     def reject_insufficient_gold(self, keys, current_time):
         """Reject player selection if they do not have enough gold"""
-        dialogue = ["You don't have enough gold!"]
+        dialogue = [translator.translate("You don't have enough gold!", dest='ko').text]
         self.dialogue_box = self.make_dialogue_box(dialogue, 0)
 
         if keys[pg.K_SPACE] and self.allow_input:
@@ -478,7 +482,7 @@ class Gui(object):
     # has_item(self, keys, current_time) : 이미 있는 아이템 구매 시 경고 창을 구현하는 메소드
     def has_item(self, keys, current_time):
         """Tell player he has item already"""
-        dialogue = ["You have that item already."]
+        dialogue = [translator.translate("You have that item already.", dest='ko').text]
         self.dialogue_box = self.make_dialogue_box(dialogue, 0)
 
         if keys[pg.K_SPACE] and self.allow_input:
@@ -493,8 +497,8 @@ class Gui(object):
     # buy_sell(self, keys, current_time) 메소드 : Buy, Sell, Leave 선택 시 확인 창을 구현하는 메소드
     def buy_sell(self, keys, current_time):
         """Ask player if they want to buy or sell something"""
-        dialogue = ["Would you like to buy or sell an item?"]
-        choices = ['Buy', 'Sell', 'Leave']
+        dialogue = [translator.translate("Would you like to buy or sell an item?", dest='ko').text]
+        choices = [translator.translate('Buy', dest='ko').text, translator.translate('Sell', dest='ko').text, translator.translate('Leave', dest='ko').text]
         self.dialogue_box = self.make_dialogue_box(dialogue, 0)
         self.selection_box = self.make_selection_box(choices)
         self.selection_arrow.rect.topleft = self.arrow_pos_list[self.arrow_index]
@@ -546,13 +550,13 @@ class Gui(object):
     # sell_items(self, keys, current_time) 메소드 : 아이템 판매 전반(선택~판매 확인)을 처리하는 메소드
     def sell_items(self, keys, current_time):
         """Have player select items to sell"""
-        dialogue = ["What would you like to sell?"]
+        dialogue = [translator.translate("What would you like to sell?", dest='ko').text]
         choices = []
         item_list = []
         for item in self.items:
             if item['type'] in self.player_inventory:
                 name = item['type']
-                price = " (" + str(item['price'] / 2) + " gold)"
+                price = translator.translate(" (" + str(item['price'] / 2) + " gold)", dest='ko').text
                 choices.append(name + price)
                 item_list.append(name)
         choices.append('Cancel')
@@ -600,7 +604,7 @@ class Gui(object):
     # cant_sell(self, keys, current_time) 메소드 : 팔 수 있는 아이템이 없을 때 경고 창을 구현하는 메소드
     def cant_sell(self, keys, current_time):
         """Do not allow player to sell anything"""
-        dialogue = ["You don't have anything to sell!"]
+        dialogue = [translator.translate("You don't have anything to sell!", dest='ko').text]
         self.dialogue_box = self.make_dialogue_box(dialogue, 0)
 
         if keys[pg.K_SPACE] and self.allow_input:
@@ -617,7 +621,7 @@ class Gui(object):
         """
         Do not sell weapon the player has equipped.
         """
-        dialogue = ["You can't sell an equipped weapon."]
+        dialogue = [translator.translate("You can't sell an equipped weapon.", dest='ko').text]
         self.dialogue_box = self.make_dialogue_box(dialogue, 0)
 
         if keys[pg.K_SPACE] and self.allow_input:
@@ -633,7 +637,7 @@ class Gui(object):
         """
         Do not sell armor the player has equipped.
         """
-        dialogue = ["You can't sell equipped armor."]
+        dialogue = [translator.translate("You can't sell equipped armor.", dest='ko').text]
         self.dialogue_box = self.make_dialogue_box(dialogue, 0)
 
         if keys[pg.K_SPACE] and self.allow_input:
