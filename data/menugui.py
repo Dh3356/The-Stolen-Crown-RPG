@@ -638,7 +638,7 @@ class MenuGui(object):
             if stat['current'] > stat['maximum']:   #현재 상태가 최대 상태보다 크게 더해졌을 때
                 stat['current'] = stat['maximum']   # 현재 상태를 최대 상태와 동일하게 변경
             if not self.inventory[potion]['quantity']: # 보관함에 있는 포션의 양이 없다면
-                del self.inventory[potion]              # 보관함에서 포션 삭제
+                del self.inventory[potion]              # 보관함에서 포션 삭제.
 
     def update(self, keys):
         """
