@@ -214,12 +214,13 @@ def create_game_data_dict():
     player_items = {'GOLD': dict([('quantity',100),
                                   ('value',0)]),
                     'Healing Potion': dict([('quantity',2),
-                                            ('value',15)]),
+                                            ('value',15), ('index',5)]), #스테이터스창에서 5번째 인덱스에 해당하는 아이템
                     'Ether Potion': dict([('quantity',1),
-                                          ('value', 15)]),
+                                          ('value', 15),('index',4)]), #스테이터스창에서 4번째 인덱스에 해당하는 아이템
                     'Rapier': dict([('quantity', 1),
                                     ('value', 50),
-                                    ('power', 9)]),
+                                    ('power', 9),
+                                    ('index', 0)]), #스테이터스창에서 0번째 인덱스에 해당하는 아이템
                     'equipped weapon': 'Rapier',
                     'equipped armor': []}
 
